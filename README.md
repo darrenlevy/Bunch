@@ -1,4 +1,4 @@
-TicTacToe
+Bunches
 =========
 
-TicTacToe game
+Bunches the game
