@@ -1,125 +1,158 @@
-type Board = string[][];
-interface BoardDelta {
-  row: number;
-  col: number;
+type Deck = string[][];
+interface Bunches {
+  cardIndices: number[];
+  seconds: number;
 }
 interface IState {
-  board: Board;
-  delta: BoardDelta;
+  deck: Deck;
+  bunches: Bunches[];
+  round: number,
+  scores: number[]
 }
 
 module gameLogic {
-  export const ROWS = 3;
-  export const COLS = 3;
-
-  /** Returns the initial TicTacToe board, which is a ROWSxCOLS matrix containing ''. */
-  function getInitialBoard(): Board {
-    let board: Board = [];
-    for (let i = 0; i < ROWS; i++) {
-      board[i] = [];
-      for (let j = 0; j < COLS; j++) {
-        board[i][j] = '';
-      }
+  export const DECK_SIZE = 16;
+  export const TOTAL_ROUNDS = 2;
+  export const NUMBER_OF_PLAYERS = 2;
+  export const NUMBER_OF_ELEMENTS_PER_CARD = 4;
+  export const NUMBER_OF_TYPES = 3;
+    
+  /** Returns the initial deck, which is a list of cards. */
+  function getInitialDeck(): Deck {
+    return makeDeck();
+  }
+  
+  function makeDeck(): Deck {
+    let deck: Deck = [];
+    for (let i = 0; i < DECK_SIZE; i++) {
+        deck[i] = [getRandomSymbol(), getRandomCount(), getRandomColor(), getRandomBorder()];
     }
-    return board;
+    return deck;
+  }
+  
+  function getRandomSymbol(): string {
+      let symbols = [":)", "$", "#"];
+      let index = Math.floor(Math.random()*100 % NUMBER_OF_TYPES);
+      return symbols[index];
+  }
+  
+  function getRandomCount(): string{
+      let count = Math.floor(Math.random()*100 % NUMBER_OF_TYPES) + 1;
+      return String(count);
+  }
+  
+  function getRandomColor(): string {
+      let colors = ["red", "orange", "blue"];
+      let index = Math.floor(Math.random()*100 % NUMBER_OF_TYPES);
+      return colors[index];
+  }
+  
+  function getRandomBorder(): string {
+      let borders = ["solid", "dotted", "dashed"];
+      let index = Math.floor(Math.random()*100 % NUMBER_OF_TYPES);
+      return borders[index];
   }
 
   export function getInitialState(): IState {
-    return {board: getInitialBoard(), delta: null};
+    return {deck: getInitialDeck(), bunches: [], round: 1, scores: [0,0]};
   }
 
   /**
-   * Returns true if the game ended in a tie because there are no empty cells.
-   * E.g., isTie returns true for the following board:
-   *     [['X', 'O', 'X'],
-   *      ['X', 'O', 'O'],
-   *      ['O', 'X', 'X']]
+   * Returns true if the game is over.
    */
-  function isTie(board: Board): boolean {
-    for (let i = 0; i < ROWS; i++) {
-      for (let j = 0; j < COLS; j++) {
-        if (board[i][j] === '') {
-          // If there is an empty cell then we do not have a tie.
-          return false;
-        }
-      }
-    }
-    // No empty cells, so we have a tie!
-    return true;
+  function isGameOver(round: number): boolean {
+    return round > TOTAL_ROUNDS;
   }
 
   /**
-   * Return the winner (either 'X' or 'O') or '' if there is no winner.
-   * The board is a matrix of size 3x3 containing either 'X', 'O', or ''.
-   * E.g., getWinner returns 'X' for the following board:
-   *     [['X', 'O', ''],
-   *      ['X', 'O', ''],
-   *      ['X', '', '']]
+   * Returns the winners.
    */
-  function getWinner(board: Board): string {
-    let boardString = '';
-    for (let i = 0; i < ROWS; i++) {
-      for (let j = 0; j < COLS; j++) {
-        let cell = board[i][j];
-        boardString += cell === '' ? ' ' : cell;
-      }
+  function getWinner(scores: number[]): number[] {
+    if (scores[0] == scores[1]) {
+        return [0, 0];
+    } else if (scores[0] > scores[1]) {
+        return [1, 0];
+    } else {
+        return [0, 1];
     }
-    let win_patterns = [
-      'XXX......',
-      '...XXX...',
-      '......XXX',
-      'X..X..X..',
-      '.X..X..X.',
-      '..X..X..X',
-      'X...X...X',
-      '..X.X.X..'
-    ];
-    for (let win_pattern of win_patterns) {
-      let x_regexp = new RegExp(win_pattern);
-      let o_regexp = new RegExp(win_pattern.replace(/X/g, 'O'));
-      if (x_regexp.test(boardString)) {
-        return 'X';
+  }
+  
+  /**
+   * Returns true if cards represent valid move, false otherwise
+   */
+  function pointsForMove(cards: string[][], seconds: number) : number {
+      let points = 0;
+      for (let i = 0; i < NUMBER_OF_ELEMENTS_PER_CARD; i++) {
+          let symbols : string[] = [];
+          for (let z = 0; z < cards.length; z++) {
+            let symbol = cards[z][i];
+            if (symbols.indexOf(symbol) < 0) {
+                symbols.push(symbol);
+            }
+          }
+          points += (110 - seconds) * symbols.length;
+          if (symbols.length !== 1 && symbols.length !== NUMBER_OF_TYPES) {
+              return -1;
+          }
       }
-      if (o_regexp.test(boardString)) {
-        return 'O';
-      }
-    }
-    return '';
+
+      return points;
   }
 
   /**
    * Returns the move that should be performed when player
-   * with index turnIndexBeforeMove makes a move in cell row X col.
+   * with index turnIndexBeforeMove makes a move.
    */
   export function createMove(
-      stateBeforeMove: IState, row: number, col: number, turnIndexBeforeMove: number): IMove {
+      stateBeforeMove: IState,
+      cardIndices: number[],
+      seconds: number,
+      turnIndexBeforeMove: number,
+      round: number,
+      scores:  number[]
+  ): IMove {
     if (!stateBeforeMove) { // stateBeforeMove is null in a new match.
       stateBeforeMove = getInitialState();
     }
-    let board: Board = stateBeforeMove.board;
-    if (board[row][col] !== '') {
-      throw new Error("One can only make a move in an empty position!");
+    let deck: Deck = stateBeforeMove.deck;
+    let cards: string[][] = [];
+    for (let i = 0; i < cardIndices.length; i++) {
+        cards.push(deck[cardIndices[i]]);
     }
-    if (getWinner(board) !== '' || isTie(board)) {
+    if (isGameOver(round)) {
       throw new Error("Can only make a move if the game is not over!");
     }
-    let boardAfterMove = angular.copy(board);
-    boardAfterMove[row][col] = turnIndexBeforeMove === 0 ? 'X' : 'O';
-    let winner = getWinner(boardAfterMove);
-    let endMatchScores: number[];
-    let turnIndexAfterMove: number;
-    if (winner !== '' || isTie(boardAfterMove)) {
-      // Game over.
-      turnIndexAfterMove = -1;
-      endMatchScores = winner === 'X' ? [1, 0] : winner === 'O' ? [0, 1] : [0, 0];
-    } else {
-      // Game continues. Now it's the opponent's turn (the turn switches from 0 to 1 and 1 to 0).
-      turnIndexAfterMove = 1 - turnIndexBeforeMove;
-      endMatchScores = null;
+    
+    if (cards.length < 2) {
+      throw new Error("You need at least two cards for a legal move!");
     }
-    let delta: BoardDelta = {row: row, col: col};
-    let stateAfterMove: IState = {delta: delta, board: boardAfterMove};
-    return {endMatchScores: endMatchScores, turnIndexAfterMove: turnIndexAfterMove, stateAfterMove: stateAfterMove};
+    let points = pointsForMove(cards, seconds);
+    if (points < 0) {
+        throw new Error("That is not a legal move!");
+    }
+    let scoresAfterMove = angular.copy(scores);
+    scoresAfterMove[turnIndexBeforeMove] += points;
+    
+    let bunches: Bunches[] = angular.copy(stateBeforeMove.bunches);
+    bunches.push({cardIndices: cardIndices, seconds: seconds});
+    
+    let winner : number[] = null;
+    let turnIndexAfterMove: number;
+    let roundAfterMove = angular.copy(round);
+    
+    if (bunches.length % NUMBER_OF_PLAYERS === 1) {
+          turnIndexAfterMove = 1 - turnIndexBeforeMove;
+    } else {
+          turnIndexAfterMove = turnIndexBeforeMove;
+          roundAfterMove++;
+    }
+    if (isGameOver(round)) {
+      // Game over.
+      winner = getWinner(scoresAfterMove);
+      turnIndexAfterMove = -1;
+    }
+    let stateAfterMove: IState = {deck: deck, bunches: bunches, round: roundAfterMove, scores: scoresAfterMove};
+    return {endMatchScores: winner, turnIndexAfterMove: turnIndexAfterMove, stateAfterMove: stateAfterMove};
   }
 
   export function checkMoveOk(stateTransition: IStateTransition): void {
@@ -128,24 +161,34 @@ module gameLogic {
     let turnIndexBeforeMove = stateTransition.turnIndexBeforeMove;
     let stateBeforeMove: IState = stateTransition.stateBeforeMove;
     let move: IMove = stateTransition.move;
-    let deltaValue: BoardDelta = stateTransition.move.stateAfterMove.delta;
-    let row = deltaValue.row;
-    let col = deltaValue.col;
-    let expectedMove = createMove(stateBeforeMove, row, col, turnIndexBeforeMove);
+    let bunches = stateTransition.move.stateAfterMove.bunches;
+    let bunch = bunches[bunches.length - 1];
+    let cardIndices = bunch.cardIndices;
+    let seconds = bunch.seconds;
+    let round = stateBeforeMove.round;
+    let scores = stateBeforeMove.scores;
+    let expectedMove = createMove(
+      stateBeforeMove,
+      cardIndices,
+      seconds,
+      turnIndexBeforeMove,
+      round,
+      scores
+    );
     if (!angular.equals(move, expectedMove)) {
-      throw new Error("Expected move=" + angular.toJson(expectedMove, true) +
-          ", but got stateTransition=" + angular.toJson(stateTransition, true))
+      throw new Error("Move calculated=" + angular.toJson(expectedMove, true) +
+          ", move expected=" + angular.toJson(move, true))
     }
   }
 
   export function forSimpleTestHtml() {
-    var move = gameLogic.createMove(null, 0, 0, 0);
+    var move = gameLogic.createMove(null, [0,1,2], 10, 0, 1, []);
     log.log("move=", move);
     var params: IStateTransition = {
       turnIndexBeforeMove: 0,
       stateBeforeMove: null,
       move: move,
-      numberOfPlayers: 2};
+      numberOfPlayers: NUMBER_OF_PLAYERS};
     gameLogic.checkMoveOk(params);
   }
 }
