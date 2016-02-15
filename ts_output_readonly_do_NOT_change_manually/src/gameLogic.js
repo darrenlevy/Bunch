@@ -1,13 +1,13 @@
 var gameLogic;
 (function (gameLogic) {
     gameLogic.DECK_SIZE = 16;
-    gameLogic.TOTAL_ROUNDS = 2;
+    gameLogic.TOTAL_ROUNDS = 3;
     gameLogic.NUMBER_OF_PLAYERS = 2;
     gameLogic.NUMBER_OF_ELEMENTS_PER_CARD = 4;
     gameLogic.NUMBER_OF_TYPES = 3;
     /** Returns the initial deck, which is a list of cards. */
-    function getInitialDeck() {
-        return makeDeck();
+    function getInitialDecks() {
+        return [makeDeck(), makeDeck(), makeDeck()];
     }
     function makeDeck() {
         var deck = [];
@@ -36,7 +36,7 @@ var gameLogic;
         return borders[index];
     }
     function getInitialState() {
-        return { deck: getInitialDeck(), bunches: [], round: 1, scores: [0, 0] };
+        return { decks: getInitialDecks(), bunches: [], round: 1, scores: [0, 0] };
     }
     gameLogic.getInitialState = getInitialState;
     /**
@@ -64,6 +64,9 @@ var gameLogic;
      */
     function pointsForMove(cards, seconds) {
         var points = 0;
+        if (cards.length === 0) {
+            return 0;
+        }
         for (var i = 0; i < gameLogic.NUMBER_OF_ELEMENTS_PER_CARD; i++) {
             var symbols = [];
             for (var z = 0; z < cards.length; z++) {
@@ -84,19 +87,19 @@ var gameLogic;
      * with index turnIndexBeforeMove makes a move.
      */
     function createMove(stateBeforeMove, cardIndices, seconds, turnIndexBeforeMove, round, scores) {
+        if (isGameOver(round)) {
+            throw new Error("Can only make a move if the game is not over!");
+        }
         if (!stateBeforeMove) {
             stateBeforeMove = getInitialState();
         }
-        var deck = stateBeforeMove.deck;
+        var deck = stateBeforeMove.decks[round - 1];
         var cards = [];
         for (var i = 0; i < cardIndices.length; i++) {
             cards.push(deck[cardIndices[i]]);
         }
-        if (isGameOver(round)) {
-            throw new Error("Can only make a move if the game is not over!");
-        }
-        if (cards.length < 2) {
-            throw new Error("You need at least two cards for a legal move!");
+        if (cards.length === 1) {
+            throw new Error("One card is not a legal move!");
         }
         var points = pointsForMove(cards, seconds);
         if (points < 0) {
@@ -116,12 +119,12 @@ var gameLogic;
             turnIndexAfterMove = turnIndexBeforeMove;
             roundAfterMove++;
         }
-        if (isGameOver(round)) {
+        if (isGameOver(roundAfterMove)) {
             // Game over.
             winner = getWinner(scoresAfterMove);
             turnIndexAfterMove = -1;
         }
-        var stateAfterMove = { deck: deck, bunches: bunches, round: roundAfterMove, scores: scoresAfterMove };
+        var stateAfterMove = { decks: stateBeforeMove.decks, bunches: bunches, round: roundAfterMove, scores: scoresAfterMove };
         return { endMatchScores: winner, turnIndexAfterMove: turnIndexAfterMove, stateAfterMove: stateAfterMove };
     }
     gameLogic.createMove = createMove;
@@ -135,8 +138,8 @@ var gameLogic;
         var bunch = bunches[bunches.length - 1];
         var cardIndices = bunch.cardIndices;
         var seconds = bunch.seconds;
-        var round = stateBeforeMove.round;
-        var scores = stateBeforeMove.scores;
+        var round = stateBeforeMove ? stateBeforeMove.round : 1;
+        var scores = stateBeforeMove ? stateBeforeMove.scores : [0, 0];
         var expectedMove = createMove(stateBeforeMove, cardIndices, seconds, turnIndexBeforeMove, round, scores);
         if (!angular.equals(move, expectedMove)) {
             throw new Error("Move calculated=" + angular.toJson(expectedMove, true) +
@@ -144,16 +147,5 @@ var gameLogic;
         }
     }
     gameLogic.checkMoveOk = checkMoveOk;
-    function forSimpleTestHtml() {
-        var move = gameLogic.createMove(null, [0, 1, 2], 10, 0, 1, []);
-        log.log("move=", move);
-        var params = {
-            turnIndexBeforeMove: 0,
-            stateBeforeMove: null,
-            move: move,
-            numberOfPlayers: gameLogic.NUMBER_OF_PLAYERS };
-        gameLogic.checkMoveOk(params);
-    }
-    gameLogic.forSimpleTestHtml = forSimpleTestHtml;
 })(gameLogic || (gameLogic = {}));
 //# sourceMappingURL=gameLogic.js.map

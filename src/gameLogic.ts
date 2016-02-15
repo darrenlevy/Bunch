@@ -4,7 +4,7 @@ interface Bunches {
   seconds: number;
 }
 interface IState {
-  deck: Deck;
+  decks: Deck[];
   bunches: Bunches[];
   round: number,
   scores: number[]
@@ -12,14 +12,14 @@ interface IState {
 
 module gameLogic {
   export const DECK_SIZE = 16;
-  export const TOTAL_ROUNDS = 2;
+  export const TOTAL_ROUNDS = 3;
   export const NUMBER_OF_PLAYERS = 2;
   export const NUMBER_OF_ELEMENTS_PER_CARD = 4;
   export const NUMBER_OF_TYPES = 3;
     
   /** Returns the initial deck, which is a list of cards. */
-  function getInitialDeck(): Deck {
-    return makeDeck();
+  function getInitialDecks(): Deck[] {
+    return [makeDeck(), makeDeck(), makeDeck()];
   }
   
   function makeDeck(): Deck {
@@ -54,7 +54,7 @@ module gameLogic {
   }
 
   export function getInitialState(): IState {
-    return {deck: getInitialDeck(), bunches: [], round: 1, scores: [0,0]};
+    return {decks: getInitialDecks(), bunches: [], round: 1, scores: [0,0]};
   }
 
   /**
@@ -82,6 +82,9 @@ module gameLogic {
    */
   function pointsForMove(cards: string[][], seconds: number) : number {
       let points = 0;
+      if (cards.length === 0) {
+          return 0;
+      }
       for (let i = 0; i < NUMBER_OF_ELEMENTS_PER_CARD; i++) {
           let symbols : string[] = [];
           for (let z = 0; z < cards.length; z++) {
@@ -111,20 +114,20 @@ module gameLogic {
       round: number,
       scores:  number[]
   ): IMove {
-    if (!stateBeforeMove) { // stateBeforeMove is null in a new match.
-      stateBeforeMove = getInitialState();
-    }
-    let deck: Deck = stateBeforeMove.deck;
-    let cards: string[][] = [];
-    for (let i = 0; i < cardIndices.length; i++) {
-        cards.push(deck[cardIndices[i]]);
-    }
     if (isGameOver(round)) {
       throw new Error("Can only make a move if the game is not over!");
     }
     
-    if (cards.length < 2) {
-      throw new Error("You need at least two cards for a legal move!");
+    if (!stateBeforeMove) { // stateBeforeMove is null in a new match.
+      stateBeforeMove = getInitialState();
+    }
+    let deck: Deck = stateBeforeMove.decks[round-1];
+    let cards: string[][] = [];
+    for (let i = 0; i < cardIndices.length; i++) {
+        cards.push(deck[cardIndices[i]]);
+    }
+    if (cards.length === 1) {
+      throw new Error("One card is not a legal move!");
     }
     let points = pointsForMove(cards, seconds);
     if (points < 0) {
@@ -146,12 +149,12 @@ module gameLogic {
           turnIndexAfterMove = turnIndexBeforeMove;
           roundAfterMove++;
     }
-    if (isGameOver(round)) {
+    if (isGameOver(roundAfterMove)) {
       // Game over.
       winner = getWinner(scoresAfterMove);
       turnIndexAfterMove = -1;
     }
-    let stateAfterMove: IState = {deck: deck, bunches: bunches, round: roundAfterMove, scores: scoresAfterMove};
+    let stateAfterMove: IState = {decks: stateBeforeMove.decks, bunches: bunches, round: roundAfterMove, scores: scoresAfterMove};
     return {endMatchScores: winner, turnIndexAfterMove: turnIndexAfterMove, stateAfterMove: stateAfterMove};
   }
 
@@ -165,8 +168,8 @@ module gameLogic {
     let bunch = bunches[bunches.length - 1];
     let cardIndices = bunch.cardIndices;
     let seconds = bunch.seconds;
-    let round = stateBeforeMove.round;
-    let scores = stateBeforeMove.scores;
+    let round = stateBeforeMove ? stateBeforeMove.round : 1;
+    let scores = stateBeforeMove ? stateBeforeMove.scores : [0, 0];
     let expectedMove = createMove(
       stateBeforeMove,
       cardIndices,
@@ -175,20 +178,20 @@ module gameLogic {
       round,
       scores
     );
-    if (!angular.equals(move, expectedMove)) {
+    if (!angular.equals(move, expectedMove)) {  
       throw new Error("Move calculated=" + angular.toJson(expectedMove, true) +
           ", move expected=" + angular.toJson(move, true))
     }
   }
 
-  export function forSimpleTestHtml() {
-    var move = gameLogic.createMove(null, [0,1,2], 10, 0, 1, []);
-    log.log("move=", move);
-    var params: IStateTransition = {
-      turnIndexBeforeMove: 0,
-      stateBeforeMove: null,
-      move: move,
-      numberOfPlayers: NUMBER_OF_PLAYERS};
-    gameLogic.checkMoveOk(params);
-  }
+//   export function forSimpleTestHtml() {
+//     var move = gameLogic.createMove(null, [0,1,2], 10, 0, 1, []);
+//     log.log("move=", move);
+//     var params: IStateTransition = {
+//       turnIndexBeforeMove: 0,
+//       stateBeforeMove: null,
+//       move: move,
+//       numberOfPlayers: NUMBER_OF_PLAYERS};
+//     gameLogic.checkMoveOk(params);
+//   }
 }
