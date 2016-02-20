@@ -2,92 +2,118 @@
 <html ng-app="myApp">
 <head>
   <meta charset="utf-8">
-  <title>TicTacToe</title>
-  <meta name="description" content="TicTacToe game">
+  <title>Bunches</title>
+  <meta name="description" content="Bunches game">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   <link rel="stylesheet" type="text/css" href="http://yoav-zibin.github.io/emulator/main.css">
   <link rel="stylesheet" type="text/css" href="css/game.css">
 
   <!--
     Loading code to resize gameArea according to some chosen width-to-height ratio.
-    In TicTacToe, the ratio is 1 (i.e., width/height = 1)
+    In Bunches, the ratio is 3/2 (i.e., width/height = 3/2)
   -->
   <script crossorigin="anonymous" src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.9/angular.js"></script>
   <script crossorigin="anonymous" src="http://yoav-zibin.github.io/emulator/dist/turnBasedServices.3.js"></script>
   <script>
-    angular.module('myApp', []).run(function () { resizeGameAreaService.setWidthToHeight(1); });
+    angular.module('myApp', []).run(function () { resizeGameAreaService.setWidthToHeight(3/2); });
   </script>
 </head>
 <body>
 <div id="gameArea">
-  <!-- First row: ['X', 'O', ''] -->
-  <div style="position:absolute; top:0%; left:0; width:100%; height:33%;">
-    <div style="position:absolute; top:0; left:0%; width:33%; height:100%;"
-        class="r b">
-      <div style="width:100%; height: 100%">
-        <svg width="100%" height="100%">
-          <line x1="25%" y1="25%"
-                x2="75%" y2="75%"
-                stroke="red"
-                stroke-width="5%"/>
-          <line x1="25%" y1="75%"
-                x2="75%" y2="25%"
-                stroke="red"
-                stroke-width="5%"/>
-        </svg>
-      </div>
+  <!-- First row -->
+  <div class="row" style="top:0%">
+    <div class="column green solid selected" style="left:0%;">
+      
+        ♫ ♫ ♫
+        
     </div>
-    <div style="position:absolute; top:0; left:33%; width:33%; height:100%;"
-        class="r b">
-      <div style="width:100%; height: 100%">
-        <svg width="100%" height="100%">
-          <circle cx="50%" cy="50%" r="27%"
-            stroke="blue" stroke-width="5%" fill="white" />
-        </svg>
-      </div>
+    <div class="column green solid" style="left:25%;">
+
+        ☺ ☺
+
     </div>
-    <div style="position:absolute; top:0; left:66%; width:33%; height:100%;"
-        class="b">
-      <div style="width:100%; height: 100%">
-      </div>
+    <div class="column pink dotted selected" style="left:50%;">
+
+          ♫ ♫ ♫
+
+    </div>
+    <div class="column orange solid" style="left:75%;">
+
+          ✌
+
     </div>
   </div>
 
-  <!-- Second row: ['', '', ''] -->
-  <div style="position:absolute; top:33%; left:0; width:100%; height:33%;">
-    <div style="position:absolute; top:0; left:0%; width:33%; height:100%;"
-        class="r b">
-      <div style="width:100%; height: 100%">
-      </div>
+  <!-- Second row -->
+  <div class="row" style="top:25%">
+    <div class="column pink dotted" style="left:0%;">
+
+       ♡
+
     </div>
-    <div style="position:absolute; top:0; left:33%; width:33%; height:100%;"
-        class="r b">
-      <div style="width:100%; height: 100%">
-      </div>
+    <div class="column pink dotted" style="left:25%;">
+
+        ♡ ♡
+
     </div>
-    <div style="position:absolute; top:0; left:66%; width:33%; height:100%;"
-        class="b">
-      <div style="width:100%; height: 100%">
-      </div>
+    <div class="column green double" style="left:50%;">
+
+          ✌ ✌
+
+    </div>
+    <div class="column green solid" style="left:75%;">
+
+          ☺
+
     </div>
   </div>
 
-  <!-- Third row: ['', '', ''] -->
-  <div style="position:absolute; top:66%; left:0; width:100%; height:33%;">
-    <div style="position:absolute; top:0; left:0%; width:33%; height:100%;"
-        class="r">
-      <div style="width:100%; height: 100%">
-      </div>
+  <!-- Third row -->
+  <div class="row" style="top:50%">
+    <div class="column orange solid" style="left:0%;">
+
+        ♫ ♫
+
     </div>
-    <div style="position:absolute; top:0; left:33%; width:33%; height:100%;"
-        class="r">
-      <div style="width:100%; height: 100%">
-      </div>
+    <div class="column green dotted" style="left:25%;">
+
+        ☺ ☺ ☺
+
     </div>
-    <div style="position:absolute; top:0; left:66%; width:33%; height:100%;"
-        class="">
-      <div style="width:100%; height: 100%">
-      </div>
+    <div class="column orange double selected" style="left:50%;">
+
+          ♫ ♫ ♫
+
+    </div>
+    <div class="column pink double" style="left:75%;">
+
+          ✌ ✌ ✌
+
+    </div>
+  </div>
+  
+  
+  <!-- Fourth row -->
+  <div class="row" style="top:75%">
+    <div class="column green double" style="left:0%;">
+
+        ✌
+
+    </div>
+    <div class="column pink dotted" style="left:25%;">
+
+        ♡ ♡ ♡
+
+    </div>
+    <div class="column orange dotted" style="left:50%;">
+
+          ♡
+
+    </div>
+    <div class="column orange solid" style="left:75%;">
+
+          ☺
+
     </div>
   </div>
 </div>
