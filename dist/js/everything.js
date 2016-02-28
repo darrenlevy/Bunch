@@ -1,113 +1,131 @@
 var gameLogic;
 (function (gameLogic) {
-    gameLogic.ROWS = 3;
-    gameLogic.COLS = 3;
-    /** Returns the initial TicTacToe board, which is a ROWSxCOLS matrix containing ''. */
-    function getInitialBoard() {
-        var board = [];
-        for (var i = 0; i < gameLogic.ROWS; i++) {
-            board[i] = [];
-            for (var j = 0; j < gameLogic.COLS; j++) {
-                board[i][j] = '';
-            }
+    gameLogic.DECK_SIZE = 16;
+    gameLogic.TOTAL_ROUNDS = 3;
+    gameLogic.NUMBER_OF_PLAYERS = 2;
+    gameLogic.NUMBER_OF_ELEMENTS_PER_CARD = 4;
+    gameLogic.NUMBER_OF_TYPES = 3;
+    /** Returns the initial deck, which is a list of cards. */
+    function getInitialDecks() {
+        return [makeDeck(), makeDeck(), makeDeck()];
+    }
+    function makeDeck() {
+        var deck = [];
+        for (var i = 0; i < gameLogic.DECK_SIZE; i++) {
+            deck[i] = [getRandomSymbol(), getRandomCount(), getRandomColor(), getRandomBorder()];
         }
-        return board;
+        return deck;
+    }
+    function getRandomSymbol() {
+        var symbols = ["♡", "✌", "☺"];
+        var index = Math.floor(Math.random() * 100 % gameLogic.NUMBER_OF_TYPES);
+        return symbols[index];
+    }
+    function getRandomCount() {
+        var count = Math.floor(Math.random() * 100 % gameLogic.NUMBER_OF_TYPES) + 1;
+        return String(count);
+    }
+    function getRandomColor() {
+        var colors = ["pink", "orange", "green"];
+        var index = Math.floor(Math.random() * 100 % gameLogic.NUMBER_OF_TYPES);
+        return colors[index];
+    }
+    function getRandomBorder() {
+        var borders = ["solid", "dotted", "double"];
+        var index = Math.floor(Math.random() * 100 % gameLogic.NUMBER_OF_TYPES);
+        return borders[index];
     }
     function getInitialState() {
-        return { board: getInitialBoard(), delta: null };
+        return { decks: getInitialDecks(), bunches: [], round: 1, scores: [0, 0] };
     }
     gameLogic.getInitialState = getInitialState;
     /**
-     * Returns true if the game ended in a tie because there are no empty cells.
-     * E.g., isTie returns true for the following board:
-     *     [['X', 'O', 'X'],
-     *      ['X', 'O', 'O'],
-     *      ['O', 'X', 'X']]
+     * Returns true if the game is over.
      */
-    function isTie(board) {
-        for (var i = 0; i < gameLogic.ROWS; i++) {
-            for (var j = 0; j < gameLogic.COLS; j++) {
-                if (board[i][j] === '') {
-                    // If there is an empty cell then we do not have a tie.
-                    return false;
-                }
-            }
-        }
-        // No empty cells, so we have a tie!
-        return true;
+    function isGameOver(round) {
+        return round > gameLogic.TOTAL_ROUNDS;
     }
     /**
-     * Return the winner (either 'X' or 'O') or '' if there is no winner.
-     * The board is a matrix of size 3x3 containing either 'X', 'O', or ''.
-     * E.g., getWinner returns 'X' for the following board:
-     *     [['X', 'O', ''],
-     *      ['X', 'O', ''],
-     *      ['X', '', '']]
+     * Returns the winners.
      */
-    function getWinner(board) {
-        var boardString = '';
-        for (var i = 0; i < gameLogic.ROWS; i++) {
-            for (var j = 0; j < gameLogic.COLS; j++) {
-                var cell = board[i][j];
-                boardString += cell === '' ? ' ' : cell;
+    function getWinner(scores) {
+        if (scores[0] == scores[1]) {
+            return [0, 0];
+        }
+        else if (scores[0] > scores[1]) {
+            return [1, 0];
+        }
+        else {
+            return [0, 1];
+        }
+    }
+    /**
+     * Returns true if cards represent valid move, false otherwise
+     */
+    function pointsForMove(cards, seconds) {
+        var points = 0;
+        if (cards.length === 0) {
+            return 0;
+        }
+        for (var i = 0; i < gameLogic.NUMBER_OF_ELEMENTS_PER_CARD; i++) {
+            var symbols = [];
+            for (var z = 0; z < cards.length; z++) {
+                var symbol = cards[z][i];
+                if (symbols.indexOf(symbol) < 0) {
+                    symbols.push(symbol);
+                }
+            }
+            points += (110 - seconds) * symbols.length;
+            if (symbols.length !== 1 && symbols.length !== gameLogic.NUMBER_OF_TYPES) {
+                return -1;
             }
         }
-        var win_patterns = [
-            'XXX......',
-            '...XXX...',
-            '......XXX',
-            'X..X..X..',
-            '.X..X..X.',
-            '..X..X..X',
-            'X...X...X',
-            '..X.X.X..'
-        ];
-        for (var _i = 0; _i < win_patterns.length; _i++) {
-            var win_pattern = win_patterns[_i];
-            var x_regexp = new RegExp(win_pattern);
-            var o_regexp = new RegExp(win_pattern.replace(/X/g, 'O'));
-            if (x_regexp.test(boardString)) {
-                return 'X';
-            }
-            if (o_regexp.test(boardString)) {
-                return 'O';
-            }
-        }
-        return '';
+        return points;
     }
     /**
      * Returns the move that should be performed when player
-     * with index turnIndexBeforeMove makes a move in cell row X col.
+     * with index turnIndexBeforeMove makes a move.
      */
-    function createMove(stateBeforeMove, row, col, turnIndexBeforeMove) {
+    function createMove(stateBeforeMove, cardIndices, seconds, turnIndexBeforeMove, round, scores) {
+        if (isGameOver(round)) {
+            throw new Error("Can only make a move if the game is not over!");
+        }
         if (!stateBeforeMove) {
             stateBeforeMove = getInitialState();
         }
-        var board = stateBeforeMove.board;
-        if (board[row][col] !== '') {
-            throw new Error("One can only make a move in an empty position!");
+        var deck = stateBeforeMove.decks[round - 1];
+        var cards = [];
+        for (var i = 0; i < cardIndices.length; i++) {
+            cards.push(deck[cardIndices[i]]);
         }
-        if (getWinner(board) !== '' || isTie(board)) {
-            throw new Error("Can only make a move if the game is not over!");
+        if (cards.length === 1) {
+            throw new Error("One card is not a legal move!");
         }
-        var boardAfterMove = angular.copy(board);
-        boardAfterMove[row][col] = turnIndexBeforeMove === 0 ? 'X' : 'O';
-        var winner = getWinner(boardAfterMove);
-        var endMatchScores;
+        var points = pointsForMove(cards, seconds);
+        if (points < 0) {
+            throw new Error("That is not a legal move!");
+        }
+        var scoresAfterMove = angular.copy(scores);
+        scoresAfterMove[turnIndexBeforeMove] += points;
+        var bunches = angular.copy(stateBeforeMove.bunches);
+        bunches.push({ cardIndices: cardIndices, seconds: seconds });
+        var winner = null;
         var turnIndexAfterMove;
-        if (winner !== '' || isTie(boardAfterMove)) {
-            // Game over.
-            turnIndexAfterMove = -1;
-            endMatchScores = winner === 'X' ? [1, 0] : winner === 'O' ? [0, 1] : [0, 0];
+        var roundAfterMove = angular.copy(round);
+        if (bunches.length % gameLogic.NUMBER_OF_PLAYERS === 1) {
+            turnIndexAfterMove = 1 - turnIndexBeforeMove;
         }
         else {
-            // Game continues. Now it's the opponent's turn (the turn switches from 0 to 1 and 1 to 0).
-            turnIndexAfterMove = 1 - turnIndexBeforeMove;
-            endMatchScores = null;
+            turnIndexAfterMove = turnIndexBeforeMove;
+            roundAfterMove++;
         }
-        var delta = { row: row, col: col };
-        var stateAfterMove = { delta: delta, board: boardAfterMove };
-        return { endMatchScores: endMatchScores, turnIndexAfterMove: turnIndexAfterMove, stateAfterMove: stateAfterMove };
+        if (isGameOver(roundAfterMove)) {
+            // Game over.
+            winner = getWinner(scoresAfterMove);
+            turnIndexAfterMove = -1;
+        }
+        var stateAfterMove = { decks: stateBeforeMove.decks, bunches: bunches, round: roundAfterMove, scores: scoresAfterMove };
+        return { endMatchScores: winner, turnIndexAfterMove: turnIndexAfterMove, stateAfterMove: stateAfterMove };
     }
     gameLogic.createMove = createMove;
     function checkMoveOk(stateTransition) {
@@ -116,27 +134,19 @@ var gameLogic;
         var turnIndexBeforeMove = stateTransition.turnIndexBeforeMove;
         var stateBeforeMove = stateTransition.stateBeforeMove;
         var move = stateTransition.move;
-        var deltaValue = stateTransition.move.stateAfterMove.delta;
-        var row = deltaValue.row;
-        var col = deltaValue.col;
-        var expectedMove = createMove(stateBeforeMove, row, col, turnIndexBeforeMove);
+        var bunches = stateTransition.move.stateAfterMove.bunches;
+        var bunch = bunches[bunches.length - 1];
+        var cardIndices = bunch.cardIndices;
+        var seconds = bunch.seconds;
+        var round = stateBeforeMove ? stateBeforeMove.round : 1;
+        var scores = stateBeforeMove ? stateBeforeMove.scores : [0, 0];
+        var expectedMove = createMove(stateBeforeMove, cardIndices, seconds, turnIndexBeforeMove, round, scores);
         if (!angular.equals(move, expectedMove)) {
-            throw new Error("Expected move=" + angular.toJson(expectedMove, true) +
-                ", but got stateTransition=" + angular.toJson(stateTransition, true));
+            throw new Error("Move calculated=" + angular.toJson(expectedMove, true) +
+                ", move expected=" + angular.toJson(move, true));
         }
     }
     gameLogic.checkMoveOk = checkMoveOk;
-    function forSimpleTestHtml() {
-        var move = gameLogic.createMove(null, 0, 0, 0);
-        log.log("move=", move);
-        var params = {
-            turnIndexBeforeMove: 0,
-            stateBeforeMove: null,
-            move: move,
-            numberOfPlayers: 2 };
-        gameLogic.checkMoveOk(params);
-    }
-    gameLogic.forSimpleTestHtml = forSimpleTestHtml;
 })(gameLogic || (gameLogic = {}));
 //# sourceMappingURL=gameLogic.js.map
 ;
@@ -152,11 +162,12 @@ var game;
     game.move = null;
     game.state = null;
     game.isHelpModalShown = false;
+    game.cards = [];
     function init() {
         translate.setTranslations(getTranslations());
         translate.setLanguage('en');
-        log.log("Translation of 'RULES_OF_TICTACTOE' is " + translate('RULES_OF_TICTACTOE'));
-        resizeGameAreaService.setWidthToHeight(1);
+        log.log("Translation of 'RULES_OF_BUNCHES' is " + translate('RULES_OF_BUNCHES'));
+        resizeGameAreaService.setWidthToHeight(3 / 2);
         moveService.setGame({
             minNumberOfPlayers: 2,
             maxNumberOfPlayers: 2,
@@ -179,21 +190,21 @@ var game;
     game.init = init;
     function getTranslations() {
         return {
-            RULES_OF_TICTACTOE: {
-                en: "Rules of Bunch",
-                iw: "חוקי המשחק",
+            RULES_OF_BUNCHES: {
+                en: "Rules of Bunches",
+                es: "Reglas de Los Manojos",
             },
             RULES_SLIDE1: {
-                en: "You and your opponent take turns to mark the grid in an empty spot. The first mark is X, then O, then X, then O, etc.",
-                iw: "אתה והיריב מסמנים איקס או עיגול כל תור",
+                en: "You and your opponent take turns finding a Bunch. A Bunch is 2 or 3 cards where the number of emoji, color of emoji, the emoji itself and border of the card are all the same or all different.",
+                es: "Usted y su oponente se da vuelta para encontrar un manojo. Un manojo es 2 o 3 cartas donde el número de emoji, el color de emoji, el propio emoji y el borde de la tarjeta son todos iguales o diferentes.",
             },
             RULES_SLIDE2: {
-                en: "The first to mark a whole row, column or diagonal wins.",
-                iw: "הראשון שמסמן שורה, עמודה או אלכסון מנצח",
+                en: "The first player goes, then the second player goes with the same cards for each round. After 3 rounds, the player with the most points wins.",
+                es: "El primer jugador pasa, entonces el segundo jugador va con las mismas cartas para cada ronda. Después de 3 rondas, el jugador con más puntos gana.",
             },
             CLOSE: {
                 en: "Close",
-                iw: "סגור",
+                es: "Cerca",
             },
         };
     }
@@ -230,7 +241,7 @@ var game;
             // We calculate the AI move only after the animation finishes,
             // because if we call aiService now
             // then the animation will be paused until the javascript finishes.
-            if (!game.state.delta) {
+            if (!game.state.bunches) {
                 // This is the first move in the match, so
                 // there is not going to be an animation, so
                 // call sendComputerMove() now (can happen in ?onlyAIs mode)
@@ -238,8 +249,18 @@ var game;
             }
         }
     }
-    function cellClicked(row, col) {
-        log.info("Clicked on cell:", row, col);
+    function cardClicked(cardIndex) {
+        var index = game.cards.indexOf(cardIndex);
+        if (index == -1) {
+            game.cards.push(cardIndex);
+        }
+        else {
+            game.cards.splice(index, 1);
+        }
+    }
+    game.cardClicked = cardClicked;
+    function cellClicked(cardIndicies, seconds, round, scores) {
+        log.info("Clicked on cards:", cardIndicies);
         if (window.location.search === '?throwException') {
             throw new Error("Throwing the error because URL has '?throwException'");
         }
@@ -247,35 +268,64 @@ var game;
             return;
         }
         try {
-            var nextMove = gameLogic.createMove(game.state, row, col, game.move.turnIndexAfterMove);
+            var nextMove = gameLogic.createMove(game.state, cardIndicies, seconds, game.move.turnIndexAfterMove, round, scores);
             game.canMakeMove = false; // to prevent making another move
             moveService.makeMove(nextMove);
         }
         catch (e) {
-            log.info(["Cell is already full in position:", row, col]);
+            log.info(["Invalid cards:", cardIndicies]);
             return;
         }
     }
     game.cellClicked = cellClicked;
-    function shouldShowImage(row, col) {
-        var cell = game.state.board[row][col];
-        return cell !== "";
+    function getEmoji(index) {
+        var emoji = "";
+        var count = parseInt(game.state.decks[game.state.round - 1][index][1]);
+        for (var i = 0; i < count; i++) {
+            emoji += game.state.decks[game.state.round - 1][index][0];
+        }
+        return emoji;
     }
-    game.shouldShowImage = shouldShowImage;
-    function isPieceX(row, col) {
-        return game.state.board[row][col] === 'X';
+    game.getEmoji = getEmoji;
+    function isGreen(index) {
+        return game.state.decks[game.state.round - 1][index][2] == "green";
     }
-    game.isPieceX = isPieceX;
-    function isPieceO(row, col) {
-        return game.state.board[row][col] === 'O';
+    game.isGreen = isGreen;
+    function isPink(index) {
+        return game.state.decks[game.state.round - 1][index][2] == "pink";
     }
-    game.isPieceO = isPieceO;
-    function shouldSlowlyAppear(row, col) {
-        return !game.animationEnded &&
-            game.state.delta &&
-            game.state.delta.row === row && game.state.delta.col === col;
+    game.isPink = isPink;
+    function isOrange(index) {
+        return game.state.decks[game.state.round - 1][index][2] == "orange";
     }
-    game.shouldSlowlyAppear = shouldSlowlyAppear;
+    game.isOrange = isOrange;
+    function isSolid(index) {
+        return game.state.decks[game.state.round - 1][index][3] == "solid";
+    }
+    game.isSolid = isSolid;
+    function isDotted(index) {
+        return game.state.decks[game.state.round - 1][index][3] == "dotted";
+    }
+    game.isDotted = isDotted;
+    function isDouble(index) {
+        return game.state.decks[game.state.round - 1][index][3] == "double";
+    }
+    game.isDouble = isDouble;
+    //   export function shouldShowImage(row: number, col: number): boolean {
+    //     let cell = state.board[row][col];
+    //     return cell !== "";
+    //   }
+    //   export function isPieceX(row: number, col: number): boolean {
+    //     return state.board[row][col] === 'X';
+    //   }
+    //   export function isPieceO(row: number, col: number): boolean {
+    //     return state.board[row][col] === 'O';
+    //   }
+    //   export function shouldSlowlyAppear(row: number, col: number): boolean {
+    //     return !animationEnded &&
+    //         state.delta &&
+    //         state.delta.row === row && state.delta.col === col;
+    //   }
     function clickedOnModal(evt) {
         if (evt.target === evt.currentTarget) {
             evt.preventDefault();
@@ -306,20 +356,35 @@ var aiService;
      * Returns all the possible moves for the given state and turnIndexBeforeMove.
      * Returns an empty array if the game is over.
      */
-    function getPossibleMoves(state, turnIndexBeforeMove) {
-        var possibleMoves = [];
-        for (var i = 0; i < gameLogic.ROWS; i++) {
-            for (var j = 0; j < gameLogic.COLS; j++) {
+    //   export function getPossibleMoves(state: IState, turnIndexBeforeMove: number): IMove[] {
+    //     let possibleMoves: IMove[] = [];
+    //     for (let i = 0; i < gameLogic.ROWS; i++) {
+    //       for (let j = 0; j < gameLogic.COLS; j++) {
+    //         try {
+    //           possibleMoves.push(gameLogic.createMove(state, i, j, turnIndexBeforeMove));
+    //         } catch (e) {
+    //           // The cell in that position was full.
+    //         }
+    //       }
+    //     }
+    //     return possibleMoves;
+    //   }
+    /**
+   * Returns a random move given state and turnIndexBeforeMove.
+   */
+    function getRandomMove(state, turnIndexBeforeMove) {
+        for (var i = 0; i < gameLogic.DECK_SIZE; i++) {
+            for (var j = 0; j < gameLogic.DECK_SIZE; j++) {
                 try {
-                    possibleMoves.push(gameLogic.createMove(state, i, j, turnIndexBeforeMove));
+                    return gameLogic.createMove(state, [i, j], 30, turnIndexBeforeMove, state.round, state.scores);
                 }
                 catch (e) {
                 }
             }
         }
-        return possibleMoves;
+        return null;
     }
-    aiService.getPossibleMoves = getPossibleMoves;
+    aiService.getRandomMove = getRandomMove;
     /**
      * Returns the move that the computer player should do for the given state.
      * alphaBetaLimits is an object that sets a limit on the alpha-beta search,
@@ -328,7 +393,9 @@ var aiService;
      */
     function createComputerMove(move, alphaBetaLimits) {
         // We use alpha-beta search, where the search states are TicTacToe moves.
-        return alphaBetaService.alphaBetaDecision(move, move.turnIndexAfterMove, getNextStates, getStateScoreForIndex0, null, alphaBetaLimits);
+        //return alphaBetaService.alphaBetaDecision(
+        //   move, move.turnIndexAfterMove, getNextStates, getStateScoreForIndex0, null, alphaBetaLimits);
+        return getRandomMove(move.stateAfterMove, move.turnIndexAfterMove);
     }
     aiService.createComputerMove = createComputerMove;
     function getStateScoreForIndex0(move, playerIndex) {
@@ -339,9 +406,6 @@ var aiService;
                     : 0;
         }
         return 0;
-    }
-    function getNextStates(move, playerIndex) {
-        return getPossibleMoves(move.stateAfterMove, playerIndex);
     }
 })(aiService || (aiService = {}));
 //# sourceMappingURL=aiService.js.map

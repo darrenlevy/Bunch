@@ -17,7 +17,7 @@ var gameLogic;
         return deck;
     }
     function getRandomSymbol() {
-        var symbols = [":)", "$", "#"];
+        var symbols = ["♡", "✌", "☺"];
         var index = Math.floor(Math.random() * 100 % gameLogic.NUMBER_OF_TYPES);
         return symbols[index];
     }
@@ -26,12 +26,12 @@ var gameLogic;
         return String(count);
     }
     function getRandomColor() {
-        var colors = ["red", "orange", "blue"];
+        var colors = ["pink", "orange", "green"];
         var index = Math.floor(Math.random() * 100 % gameLogic.NUMBER_OF_TYPES);
         return colors[index];
     }
     function getRandomBorder() {
-        var borders = ["solid", "dotted", "dashed"];
+        var borders = ["solid", "dotted", "double"];
         var index = Math.floor(Math.random() * 100 % gameLogic.NUMBER_OF_TYPES);
         return borders[index];
     }

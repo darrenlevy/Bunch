@@ -31,7 +31,7 @@ module gameLogic {
   }
   
   function getRandomSymbol(): string {
-      let symbols = [":)", "$", "#"];
+      let symbols = ["♡", "✌", "☺"];
       let index = Math.floor(Math.random()*100 % NUMBER_OF_TYPES);
       return symbols[index];
   }
@@ -42,13 +42,13 @@ module gameLogic {
   }
   
   function getRandomColor(): string {
-      let colors = ["red", "orange", "blue"];
+      let colors = ["pink", "orange", "green"];
       let index = Math.floor(Math.random()*100 % NUMBER_OF_TYPES);
       return colors[index];
   }
   
   function getRandomBorder(): string {
-      let borders = ["solid", "dotted", "dashed"];
+      let borders = ["solid", "dotted", "double"];
       let index = Math.floor(Math.random()*100 % NUMBER_OF_TYPES);
       return borders[index];
   }
