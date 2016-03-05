@@ -24,8 +24,17 @@ module gameLogic {
   
   function makeDeck(): Deck {
     let deck: Deck = [];
+
+    let keys : string[] = [];
     for (let i = 0; i < DECK_SIZE; i++) {
-        deck[i] = [getRandomSymbol(), getRandomCount(), getRandomColor(), getRandomBorder()];
+        let card : string[] = [];
+        let key : string = "";
+        do {
+           card = [getRandomSymbol(), getRandomCount(), getRandomColor(), getRandomBorder()];
+           key = card[0]+card[1]+card[2]+card[3];
+        } while (keys.indexOf(key) !== -1);
+        keys[i] = key;
+        deck[i] = card;
     }
     return deck;
   }
@@ -78,9 +87,9 @@ module gameLogic {
   }
   
   /**
-   * Returns true if cards represent valid move, false otherwise
+   * Returns 0 or more points if cards represent valid move, -1 otherwise
    */
-  function pointsForMove(cards: string[][], seconds: number) : number {
+  export function pointsForMove(cards: string[][], seconds: number) : number {
       let points = 0;
       if (cards.length === 0) {
           return 0;
@@ -89,16 +98,15 @@ module gameLogic {
           let symbols : string[] = [];
           for (let z = 0; z < cards.length; z++) {
             let symbol = cards[z][i];
-            if (symbols.indexOf(symbol) < 0) {
+            if (symbols.indexOf(symbol) == -1) {
                 symbols.push(symbol);
             }
           }
           points += (110 - seconds) * symbols.length;
-          if (symbols.length !== 1 && symbols.length !== NUMBER_OF_TYPES) {
+          if (symbols.length !== 1 && symbols.length !== cards.length) {
               return -1;
           }
       }
-
       return points;
   }
 
@@ -122,6 +130,7 @@ module gameLogic {
       stateBeforeMove = getInitialState();
     }
     let deck: Deck = stateBeforeMove.decks[round-1];
+
     let cards: string[][] = [];
     for (let i = 0; i < cardIndices.length; i++) {
         cards.push(deck[cardIndices[i]]);
@@ -129,16 +138,17 @@ module gameLogic {
     if (cards.length === 1) {
       throw new Error("One card is not a legal move!");
     }
+
     let points = pointsForMove(cards, seconds);
     if (points < 0) {
         throw new Error("That is not a legal move!");
     }
     let scoresAfterMove = angular.copy(scores);
     scoresAfterMove[turnIndexBeforeMove] += points;
-    
+
     let bunches: Bunches[] = angular.copy(stateBeforeMove.bunches);
     bunches.push({cardIndices: cardIndices, seconds: seconds});
-    
+
     let winner : number[] = null;
     let turnIndexAfterMove: number;
     let roundAfterMove = angular.copy(round);
@@ -154,6 +164,7 @@ module gameLogic {
       winner = getWinner(scoresAfterMove);
       turnIndexAfterMove = -1;
     }
+
     let stateAfterMove: IState = {decks: stateBeforeMove.decks, bunches: bunches, round: roundAfterMove, scores: scoresAfterMove};
     return {endMatchScores: winner, turnIndexAfterMove: turnIndexAfterMove, stateAfterMove: stateAfterMove};
   }
@@ -161,8 +172,16 @@ module gameLogic {
   export function checkMoveOk(stateTransition: IStateTransition): void {
     // We can assume that turnIndexBeforeMove and stateBeforeMove are legal, and we need
     // to verify that the move is OK.
+
     let turnIndexBeforeMove = stateTransition.turnIndexBeforeMove;
     let stateBeforeMove: IState = stateTransition.stateBeforeMove;
+    if (!stateBeforeMove) {
+        stateBeforeMove = angular.copy(stateTransition.move.stateAfterMove);
+        stateBeforeMove.bunches = [];
+        stateBeforeMove.round = 1;
+        stateBeforeMove.scores = [0,0]; 
+    }
+    
     let move: IMove = stateTransition.move;
     let bunches = stateTransition.move.stateAfterMove.bunches;
     let bunch = bunches[bunches.length - 1];
@@ -170,6 +189,7 @@ module gameLogic {
     let seconds = bunch.seconds;
     let round = stateBeforeMove ? stateBeforeMove.round : 1;
     let scores = stateBeforeMove ? stateBeforeMove.scores : [0, 0];
+
     let expectedMove = createMove(
       stateBeforeMove,
       cardIndices,
@@ -178,6 +198,7 @@ module gameLogic {
       round,
       scores
     );
+
     if (!angular.equals(move, expectedMove)) {  
       throw new Error("Move calculated=" + angular.toJson(expectedMove, true) +
           ", move expected=" + angular.toJson(move, true))

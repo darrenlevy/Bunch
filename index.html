@@ -49,6 +49,10 @@
 </head>
 <body ng-cloak>
   <div id="e2e_test_open_rules_modal" class="help-tip" ng-click="game.isHelpModalShown = true" aria-hidden="true"></div>
+  <div id="e2e_test_submit_move" class="submit-move" ng-click="game.submitMove()">Submit move</div>
+  <div id="e2e_test_seconds" class="seconds-left">{{100 - game.seconds}}</div>
+  <div id="e2e_test_player_1_score" class="score" ng-class="{currentPlayer: game.isCurrentPlayerIndex(0)}">Player 1: {{game.player1Score}}</div>
+  <div id="e2e_test_player_2_score" class="score" ng-class="{currentPlayer: game.isCurrentPlayerIndex(1)}">Player 2: {{game.player2Score}}</div>
 
   <div class="overlayModal" ng-click="game.clickedOnModal($event)"
       ng-class="{zeroOpacity: !game.isHelpModalShown, oneOpacity: game.isHelpModalShown}" aria-hidden="true">
@@ -107,11 +111,12 @@
                 solid: game.isSolid(row * 4 + col),
                 dotted: game.isDotted(row * 4 + col),
                 double: game.isDouble(row * 4 + col),
-                selected: game.cards.indexOf(row * 4 + col) != -1
+                selected: game.cards.indexOf(row * 4 + col) != -1,
+                flipped: game.shouldFlip(row * 4 + col)
                 }"
             ng-click="game.cardClicked(row * 4 + col)"
             id="{{'e2e_test_div_' + row * 4 + col}}">
-          {{game.getEmoji(row * 4 + col)}}
+          <div class='emoji' ng-class="{flipped: game.shouldFlip(row * 4 + col)}">{{game.getEmoji(row * 4 + col)}}</div>
         </div>
     </div>
   </div>

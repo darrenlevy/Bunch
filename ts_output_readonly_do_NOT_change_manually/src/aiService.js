@@ -11,35 +11,30 @@ var aiService;
      * Returns all the possible moves for the given state and turnIndexBeforeMove.
      * Returns an empty array if the game is over.
      */
-    //   export function getPossibleMoves(state: IState, turnIndexBeforeMove: number): IMove[] {
-    //     let possibleMoves: IMove[] = [];
-    //     for (let i = 0; i < gameLogic.ROWS; i++) {
-    //       for (let j = 0; j < gameLogic.COLS; j++) {
-    //         try {
-    //           possibleMoves.push(gameLogic.createMove(state, i, j, turnIndexBeforeMove));
-    //         } catch (e) {
-    //           // The cell in that position was full.
-    //         }
-    //       }
-    //     }
-    //     return possibleMoves;
-    //   }
-    /**
-   * Returns a random move given state and turnIndexBeforeMove.
-   */
-    function getRandomMove(state, turnIndexBeforeMove) {
+    function getPossibleMoves(state, turnIndexBeforeMove) {
+        var seconds = 10;
+        var possibleMoves = [];
         for (var i = 0; i < gameLogic.DECK_SIZE; i++) {
             for (var j = 0; j < gameLogic.DECK_SIZE; j++) {
                 try {
-                    return gameLogic.createMove(state, [i, j], 30, turnIndexBeforeMove, state.round, state.scores);
+                    var deck = state.decks[state.round];
+                    var card1 = deck[i];
+                    var card2 = deck[j];
+                    var points = gameLogic.pointsForMove([card1, card2], seconds);
+                    if (points >= 0) {
+                        possibleMoves.push(gameLogic.createMove(state, [i, j], seconds, turnIndexBeforeMove, state.round, state.scores));
+                    }
                 }
                 catch (e) {
                 }
             }
         }
-        return null;
+        if (possibleMoves.length == 0) {
+            possibleMoves.push(gameLogic.createMove(state, [], seconds, turnIndexBeforeMove, state.round, state.scores));
+        }
+        return possibleMoves;
     }
-    aiService.getRandomMove = getRandomMove;
+    aiService.getPossibleMoves = getPossibleMoves;
     /**
      * Returns the move that the computer player should do for the given state.
      * alphaBetaLimits is an object that sets a limit on the alpha-beta search,
@@ -48,9 +43,7 @@ var aiService;
      */
     function createComputerMove(move, alphaBetaLimits) {
         // We use alpha-beta search, where the search states are TicTacToe moves.
-        //return alphaBetaService.alphaBetaDecision(
-        //   move, move.turnIndexAfterMove, getNextStates, getStateScoreForIndex0, null, alphaBetaLimits);
-        return getRandomMove(move.stateAfterMove, move.turnIndexAfterMove);
+        return alphaBetaService.alphaBetaDecision(move, move.turnIndexAfterMove, getNextStates, getStateScoreForIndex0, null, alphaBetaLimits);
     }
     aiService.createComputerMove = createComputerMove;
     function getStateScoreForIndex0(move, playerIndex) {
@@ -61,6 +54,9 @@ var aiService;
                     : 0;
         }
         return 0;
+    }
+    function getNextStates(move, playerIndex) {
+        return getPossibleMoves(move.stateAfterMove, playerIndex);
     }
 })(aiService || (aiService = {}));
 //# sourceMappingURL=aiService.js.map

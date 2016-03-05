@@ -11,8 +11,16 @@ var gameLogic;
     }
     function makeDeck() {
         var deck = [];
+        var keys = [];
         for (var i = 0; i < gameLogic.DECK_SIZE; i++) {
-            deck[i] = [getRandomSymbol(), getRandomCount(), getRandomColor(), getRandomBorder()];
+            var card = [];
+            var key = "";
+            do {
+                card = [getRandomSymbol(), getRandomCount(), getRandomColor(), getRandomBorder()];
+                key = card[0] + card[1] + card[2] + card[3];
+            } while (keys.indexOf(key) !== -1);
+            keys[i] = key;
+            deck[i] = card;
         }
         return deck;
     }
@@ -60,7 +68,7 @@ var gameLogic;
         }
     }
     /**
-     * Returns true if cards represent valid move, false otherwise
+     * Returns 0 or more points if cards represent valid move, -1 otherwise
      */
     function pointsForMove(cards, seconds) {
         var points = 0;
@@ -71,17 +79,18 @@ var gameLogic;
             var symbols = [];
             for (var z = 0; z < cards.length; z++) {
                 var symbol = cards[z][i];
-                if (symbols.indexOf(symbol) < 0) {
+                if (symbols.indexOf(symbol) == -1) {
                     symbols.push(symbol);
                 }
             }
             points += (110 - seconds) * symbols.length;
-            if (symbols.length !== 1 && symbols.length !== gameLogic.NUMBER_OF_TYPES) {
+            if (symbols.length !== 1 && symbols.length !== cards.length) {
                 return -1;
             }
         }
         return points;
     }
+    gameLogic.pointsForMove = pointsForMove;
     /**
      * Returns the move that should be performed when player
      * with index turnIndexBeforeMove makes a move.
@@ -133,6 +142,12 @@ var gameLogic;
         // to verify that the move is OK.
         var turnIndexBeforeMove = stateTransition.turnIndexBeforeMove;
         var stateBeforeMove = stateTransition.stateBeforeMove;
+        if (!stateBeforeMove) {
+            stateBeforeMove = angular.copy(stateTransition.move.stateAfterMove);
+            stateBeforeMove.bunches = [];
+            stateBeforeMove.round = 1;
+            stateBeforeMove.scores = [0, 0];
+        }
         var move = stateTransition.move;
         var bunches = stateTransition.move.stateAfterMove.bunches;
         var bunch = bunches[bunches.length - 1];
@@ -163,6 +178,11 @@ var game;
     game.state = null;
     game.isHelpModalShown = false;
     game.cards = [];
+    game.seconds = 0;
+    game.player1Score = 0;
+    game.player2Score = 0;
+    game.deckIndex = 0;
+    var timer;
     function init() {
         translate.setTranslations(getTranslations());
         translate.setLanguage('en');
@@ -230,8 +250,10 @@ var game;
         if (!game.state) {
             game.state = gameLogic.getInitialState();
         }
+        resetBoard(game.state.scores);
         game.canMakeMove = game.move.turnIndexAfterMove >= 0 &&
             params.yourPlayerIndex === game.move.turnIndexAfterMove; // it's my turn
+        game.deckIndex = game.canMakeMove ? game.state.round - 1 : game.deckIndex;
         // Is it the computer's turn?
         game.isComputerTurn = game.canMakeMove &&
             params.playersInfo[params.yourPlayerIndex].playerId === '';
@@ -250,6 +272,13 @@ var game;
         }
     }
     function cardClicked(cardIndex) {
+        if (game.state && game.state.bunches.length % 2 == 1) {
+            var lastBunchIndex = game.state.bunches.length - 1;
+            var lastBunch = game.state.bunches[lastBunchIndex];
+            if (lastBunch.seconds <= game.seconds && lastBunch.cardIndices.indexOf(cardIndex) !== -1) {
+                return;
+            }
+        }
         var index = game.cards.indexOf(cardIndex);
         if (index == -1) {
             game.cards.push(cardIndex);
@@ -259,8 +288,24 @@ var game;
         }
     }
     game.cardClicked = cardClicked;
-    function cellClicked(cardIndicies, seconds, round, scores) {
-        log.info("Clicked on cards:", cardIndicies);
+    function isCurrentPlayerIndex(playerIndex) {
+        return game.move.turnIndexAfterMove == playerIndex;
+    }
+    game.isCurrentPlayerIndex = isCurrentPlayerIndex;
+    function resetBoard(scores) {
+        $interval.cancel(timer);
+        game.cards = [];
+        game.seconds = 0;
+        game.player1Score = scores[0];
+        game.player2Score = scores[1];
+        timer = $interval(function () {
+            game.seconds++;
+            if (game.seconds > 99) {
+                $interval.cancel(timer);
+            }
+        }, 1000);
+    }
+    function submitMove() {
         if (window.location.search === '?throwException') {
             throw new Error("Throwing the error because URL has '?throwException'");
         }
@@ -268,49 +313,63 @@ var game;
             return;
         }
         try {
-            var nextMove = gameLogic.createMove(game.state, cardIndicies, seconds, game.move.turnIndexAfterMove, round, scores);
+            var nextMove = gameLogic.createMove(game.state, game.cards, game.seconds, game.move.turnIndexAfterMove, game.state.round, game.state.scores);
             game.canMakeMove = false; // to prevent making another move
             moveService.makeMove(nextMove);
         }
         catch (e) {
-            log.info(["Invalid cards:", cardIndicies]);
+            log.info(["Invalid cards:", game.cards]);
             return;
         }
     }
-    game.cellClicked = cellClicked;
+    game.submitMove = submitMove;
     function getEmoji(index) {
         var emoji = "";
-        var count = parseInt(game.state.decks[game.state.round - 1][index][1]);
+        var count = parseInt(game.state.decks[game.deckIndex][index][1]);
         for (var i = 0; i < count; i++) {
-            emoji += game.state.decks[game.state.round - 1][index][0];
+            emoji += game.state.decks[game.deckIndex][index][0];
         }
         return emoji;
     }
     game.getEmoji = getEmoji;
     function isGreen(index) {
-        return game.state.decks[game.state.round - 1][index][2] == "green";
+        return game.state.decks[game.deckIndex][index][2] == "green";
     }
     game.isGreen = isGreen;
     function isPink(index) {
-        return game.state.decks[game.state.round - 1][index][2] == "pink";
+        return game.state.decks[game.deckIndex][index][2] == "pink";
     }
     game.isPink = isPink;
     function isOrange(index) {
-        return game.state.decks[game.state.round - 1][index][2] == "orange";
+        return game.state.decks[game.deckIndex][index][2] == "orange";
     }
     game.isOrange = isOrange;
     function isSolid(index) {
-        return game.state.decks[game.state.round - 1][index][3] == "solid";
+        return game.state.decks[game.deckIndex][index][3] == "solid";
     }
     game.isSolid = isSolid;
     function isDotted(index) {
-        return game.state.decks[game.state.round - 1][index][3] == "dotted";
+        return game.state.decks[game.deckIndex][index][3] == "dotted";
     }
     game.isDotted = isDotted;
     function isDouble(index) {
-        return game.state.decks[game.state.round - 1][index][3] == "double";
+        return game.state.decks[game.deckIndex][index][3] == "double";
     }
     game.isDouble = isDouble;
+    function shouldFlip(index) {
+        if (game.state && game.state.bunches.length % 2 == 1) {
+            var lastBunchIndex = game.state.bunches.length - 1;
+            var lastBunch = game.state.bunches[lastBunchIndex];
+            if (lastBunch.seconds <= game.seconds && lastBunch.cardIndices.indexOf(index) !== -1) {
+                if (game.cards.indexOf(index) !== -1) {
+                    game.cards.splice(game.cards.indexOf(index), 1);
+                }
+                return true;
+            }
+        }
+        return false;
+    }
+    game.shouldFlip = shouldFlip;
     //   export function shouldShowImage(row: number, col: number): boolean {
     //     let cell = state.board[row][col];
     //     return cell !== "";
@@ -356,35 +415,30 @@ var aiService;
      * Returns all the possible moves for the given state and turnIndexBeforeMove.
      * Returns an empty array if the game is over.
      */
-    //   export function getPossibleMoves(state: IState, turnIndexBeforeMove: number): IMove[] {
-    //     let possibleMoves: IMove[] = [];
-    //     for (let i = 0; i < gameLogic.ROWS; i++) {
-    //       for (let j = 0; j < gameLogic.COLS; j++) {
-    //         try {
-    //           possibleMoves.push(gameLogic.createMove(state, i, j, turnIndexBeforeMove));
-    //         } catch (e) {
-    //           // The cell in that position was full.
-    //         }
-    //       }
-    //     }
-    //     return possibleMoves;
-    //   }
-    /**
-   * Returns a random move given state and turnIndexBeforeMove.
-   */
-    function getRandomMove(state, turnIndexBeforeMove) {
+    function getPossibleMoves(state, turnIndexBeforeMove) {
+        var seconds = 10;
+        var possibleMoves = [];
         for (var i = 0; i < gameLogic.DECK_SIZE; i++) {
             for (var j = 0; j < gameLogic.DECK_SIZE; j++) {
                 try {
-                    return gameLogic.createMove(state, [i, j], 30, turnIndexBeforeMove, state.round, state.scores);
+                    var deck = state.decks[state.round];
+                    var card1 = deck[i];
+                    var card2 = deck[j];
+                    var points = gameLogic.pointsForMove([card1, card2], seconds);
+                    if (points >= 0) {
+                        possibleMoves.push(gameLogic.createMove(state, [i, j], seconds, turnIndexBeforeMove, state.round, state.scores));
+                    }
                 }
                 catch (e) {
                 }
             }
         }
-        return null;
+        if (possibleMoves.length == 0) {
+            possibleMoves.push(gameLogic.createMove(state, [], seconds, turnIndexBeforeMove, state.round, state.scores));
+        }
+        return possibleMoves;
     }
-    aiService.getRandomMove = getRandomMove;
+    aiService.getPossibleMoves = getPossibleMoves;
     /**
      * Returns the move that the computer player should do for the given state.
      * alphaBetaLimits is an object that sets a limit on the alpha-beta search,
@@ -393,9 +447,7 @@ var aiService;
      */
     function createComputerMove(move, alphaBetaLimits) {
         // We use alpha-beta search, where the search states are TicTacToe moves.
-        //return alphaBetaService.alphaBetaDecision(
-        //   move, move.turnIndexAfterMove, getNextStates, getStateScoreForIndex0, null, alphaBetaLimits);
-        return getRandomMove(move.stateAfterMove, move.turnIndexAfterMove);
+        return alphaBetaService.alphaBetaDecision(move, move.turnIndexAfterMove, getNextStates, getStateScoreForIndex0, null, alphaBetaLimits);
     }
     aiService.createComputerMove = createComputerMove;
     function getStateScoreForIndex0(move, playerIndex) {
@@ -406,6 +458,9 @@ var aiService;
                     : 0;
         }
         return 0;
+    }
+    function getNextStates(move, playerIndex) {
+        return getPossibleMoves(move.stateAfterMove, playerIndex);
     }
 })(aiService || (aiService = {}));
 //# sourceMappingURL=aiService.js.map

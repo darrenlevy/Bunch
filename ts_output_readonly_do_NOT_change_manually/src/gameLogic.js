@@ -11,8 +11,16 @@ var gameLogic;
     }
     function makeDeck() {
         var deck = [];
+        var keys = [];
         for (var i = 0; i < gameLogic.DECK_SIZE; i++) {
-            deck[i] = [getRandomSymbol(), getRandomCount(), getRandomColor(), getRandomBorder()];
+            var card = [];
+            var key = "";
+            do {
+                card = [getRandomSymbol(), getRandomCount(), getRandomColor(), getRandomBorder()];
+                key = card[0] + card[1] + card[2] + card[3];
+            } while (keys.indexOf(key) !== -1);
+            keys[i] = key;
+            deck[i] = card;
         }
         return deck;
     }
@@ -60,7 +68,7 @@ var gameLogic;
         }
     }
     /**
-     * Returns true if cards represent valid move, false otherwise
+     * Returns 0 or more points if cards represent valid move, -1 otherwise
      */
     function pointsForMove(cards, seconds) {
         var points = 0;
@@ -71,17 +79,18 @@ var gameLogic;
             var symbols = [];
             for (var z = 0; z < cards.length; z++) {
                 var symbol = cards[z][i];
-                if (symbols.indexOf(symbol) < 0) {
+                if (symbols.indexOf(symbol) == -1) {
                     symbols.push(symbol);
                 }
             }
             points += (110 - seconds) * symbols.length;
-            if (symbols.length !== 1 && symbols.length !== gameLogic.NUMBER_OF_TYPES) {
+            if (symbols.length !== 1 && symbols.length !== cards.length) {
                 return -1;
             }
         }
         return points;
     }
+    gameLogic.pointsForMove = pointsForMove;
     /**
      * Returns the move that should be performed when player
      * with index turnIndexBeforeMove makes a move.
@@ -133,6 +142,12 @@ var gameLogic;
         // to verify that the move is OK.
         var turnIndexBeforeMove = stateTransition.turnIndexBeforeMove;
         var stateBeforeMove = stateTransition.stateBeforeMove;
+        if (!stateBeforeMove) {
+            stateBeforeMove = angular.copy(stateTransition.move.stateAfterMove);
+            stateBeforeMove.bunches = [];
+            stateBeforeMove.round = 1;
+            stateBeforeMove.scores = [0, 0];
+        }
         var move = stateTransition.move;
         var bunches = stateTransition.move.stateAfterMove.bunches;
         var bunch = bunches[bunches.length - 1];

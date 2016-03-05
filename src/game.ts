@@ -14,6 +14,11 @@ module game {
   export let state: IState = null;
   export let isHelpModalShown: boolean = false;
   export let cards: number[] = [];
+  export let seconds: number = 0;
+  export let player1Score: number = 0;
+  export let player2Score: number = 0;
+  export let deckIndex: number = 0;
+  let timer : ng.IPromise<any>;
 
   export function init() {
     translate.setTranslations(getTranslations());
@@ -39,9 +44,9 @@ module game {
           excludeRules: ["unused-classes", "script-placement"],
         });
       }, 3000);
-    }
+    }  
   }
-
+  
   function getTranslations(): Translations {
     return {
       RULES_OF_BUNCHES: {
@@ -87,9 +92,11 @@ module game {
     if (!state) {
       state = gameLogic.getInitialState();
     }
+    resetBoard(state.scores);
+    
     canMakeMove = move.turnIndexAfterMove >= 0 && // game is ongoing
       params.yourPlayerIndex === move.turnIndexAfterMove; // it's my turn
-
+    deckIndex = canMakeMove ? state.round - 1 : deckIndex;
     // Is it the computer's turn?
     isComputerTurn = canMakeMove &&
         params.playersInfo[params.yourPlayerIndex].playerId === '';
@@ -109,6 +116,13 @@ module game {
   }
   
   export function cardClicked(cardIndex: number) {
+      if (state && state.bunches.length % 2 == 1) {
+        let lastBunchIndex = state.bunches.length-1;
+        let lastBunch = state.bunches[lastBunchIndex];
+        if (lastBunch.seconds <= seconds && lastBunch.cardIndices.indexOf(cardIndex) !== -1) {
+            return;
+        } 
+      }
       let index = cards.indexOf(cardIndex)
       if (index == -1) {
           cards.push(cardIndex);
@@ -116,10 +130,26 @@ module game {
           cards.splice(index, 1);
       }
   }
+  
+  export function isCurrentPlayerIndex(playerIndex: number): boolean {
+      return move.turnIndexAfterMove == playerIndex;
+  }
+  
+  function resetBoard(scores: number[]) {
+       $interval.cancel(timer);
+       cards = [];
+       seconds = 0;
+       player1Score = scores[0];
+       player2Score = scores[1];
+       timer = $interval(function () {
+                seconds++;
+                if (seconds > 99) {
+                $interval.cancel(timer);
+                }
+       }, 1000);
+  }
 
-  export function cellClicked(cardIndicies: number[], seconds: number, round: number, scores: number[]): void {
-    
-    log.info("Clicked on cards:", cardIndicies);
+  export function submitMove (): void {
     if (window.location.search === '?throwException') { // to test encoding a stack trace with sourcemap
       throw new Error("Throwing the error because URL has '?throwException'");
     }
@@ -128,47 +158,62 @@ module game {
     }
     try {
       let nextMove = gameLogic.createMove(
-          state, cardIndicies, seconds, move.turnIndexAfterMove, round, scores);  
+          state, cards, seconds, move.turnIndexAfterMove, state.round, state.scores);  
       canMakeMove = false; // to prevent making another move
       moveService.makeMove(nextMove);
     } catch (e) {
-      log.info(["Invalid cards:", cardIndicies]);
+      log.info(["Invalid cards:", cards]);
       return;
     }
   }
  
   export function getEmoji(index: number): String {
     let emoji = "";
-    let count = parseInt(state.decks[state.round-1][index][1])
+    let count = parseInt(state.decks[deckIndex][index][1])
     for (let i = 0; i < count; i++) {
-        emoji += state.decks[state.round-1][index][0];
+        emoji += state.decks[deckIndex][index][0];
     }
     return emoji;
   }
  
   
   export function isGreen(index: number): boolean {
-    return state.decks[state.round-1][index][2] == "green";
+    return state.decks[deckIndex][index][2] == "green";
   }
   
   export function isPink(index: number): boolean {
-    return state.decks[state.round-1][index][2] == "pink";
+    return state.decks[deckIndex][index][2] == "pink";
   }
   
   export function isOrange(index: number): boolean {
-    return state.decks[state.round-1][index][2] == "orange";
+    return state.decks[deckIndex][index][2] == "orange";
   }
   
   export function isSolid(index: number): boolean {
-    return state.decks[state.round-1][index][3] == "solid";
+    return state.decks[deckIndex][index][3] == "solid";
   }
   
   export function isDotted(index: number): boolean {
-    return state.decks[state.round-1][index][3] == "dotted";
+    return state.decks[deckIndex][index][3] == "dotted";
   }
   
   export function isDouble(index: number): boolean {
-    return state.decks[state.round-1][index][3] == "double";
+    return state.decks[deckIndex][index][3] == "double";
+  }
+  
+  export function shouldFlip(index: number): boolean {
+    if (state && state.bunches.length % 2 == 1) {
+        let lastBunchIndex = state.bunches.length-1;
+        let lastBunch = state.bunches[lastBunchIndex];
+        if (lastBunch.seconds <= seconds && lastBunch.cardIndices.indexOf(index) !== -1) {
+            if (cards.indexOf(index) !== -1) {
+                cards.splice(cards.indexOf(index), 1);
+            }
+            return true;
+        } 
+    }
+      
+    return false;
   }
   
   

@@ -18,6 +18,10 @@
   resize: vertical;
 }
 
+.emoji {
+    backface-visibility: hidden;
+}
+
 @media (max-width: 1000px) {
   .column {
       font-size: 25px;
@@ -31,7 +35,7 @@
 }
 
 .green {
-  color:green;
+  color:#ADD8E6;
 }
 
 .orange {
@@ -39,7 +43,7 @@
 } 
 
 .pink {
-   color:pink;
+   color:#FF69B4;
 }
 
 .solid {
@@ -69,6 +73,24 @@
 
 td {
   padding:0 5px 0 5px;
+}
+
+.currentPlayer {
+  color: aqua;  
+}
+
+.flipped {
+  animation: flip 0.5s linear;
+  transform: rotateX(180deg);
+}
+
+@keyframes flip {
+    from {
+        transform: rotateX(0deg);
+    }
+    to {
+        transform: rotateX(180deg);
+    }
 }
 
 .help-tip {
