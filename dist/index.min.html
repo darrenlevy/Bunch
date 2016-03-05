@@ -30,7 +30,10 @@
   <div id="e2e_test_seconds" class="seconds-left">{{100 - game.seconds}}</div>
   <div id="e2e_test_player_1_score" class="score" ng-class="{currentPlayer: game.isCurrentPlayerIndex(0)}">Player 1: {{game.player1Score}}</div>
   <div id="e2e_test_player_2_score" class="score" ng-class="{currentPlayer: game.isCurrentPlayerIndex(1)}">Player 2: {{game.player2Score}}</div>
-
+  <div id="e2e_test_round_1_cards" class="cards-played" ng-click="game.resultRoundClicked(1)">Round 1</div>
+  <div id="e2e_test_round_2_cards" class="cards-played" ng-click="game.resultRoundClicked(2)">Round 2</div>
+  <div id="e2e_test_round_3_cards" class="cards-played" ng-click="game.resultRoundClicked(3)">Round 3</div>
+    
   <div class="overlayModal" ng-click="game.clickedOnModal($event)"
       ng-class="{zeroOpacity: !game.isHelpModalShown, oneOpacity: game.isHelpModalShown}" aria-hidden="true">
     <div class="modal-dialog">
@@ -79,7 +82,7 @@
   </div>
 
   <div id="gameArea">
-    <div ng-repeat="row in [0, 1, 2, 3]" class="row" style="top:{{row * 25}}%">
+    <div ng-repeat="row in [0, 1, 2, 3]" class="row" style="top:{{row * 25}}%" ng-class="{hideArea: game.showResults}">
         <div ng-repeat="col in [0, 1, 2, 3]" class="column" style="left:{{col * 25}}%;"
             ng-class="{
                 green: game.isGreen(row * 4 + col),
@@ -96,6 +99,24 @@
           <div class='emoji' ng-class="{flipped: game.shouldFlip(row * 4 + col)}">{{game.getEmoji(row * 4 + col)}}</div>
         </div>
     </div>
+    
+     <div ng-repeat="row in [0, 1]" class="row" style="top:{{row * 25}}%" ng-class="{hideArea: !game.showResults}">
+        Player {{row+1}}:
+        <div ng-repeat="col in [0, 1, 2]" class="column" style="left:{{col * 25}}%;"
+            ng-class="{
+                green: game.resultIsGreen(row, col),
+                pink: game.resultIsPink(row, col),
+                orange: game.resultIsOrange(row, col),
+                solid: game.resultIsSolid(row, col),
+                dotted: game.resultIsDotted(row, col),
+                double: game.resultIsDouble(row, col),
+                }"
+            id="{{'e2e_test_result_div_' + row + '_' + col}}">
+          <div class='emoji'>{{game.getResultEmoji(row, col)}}</div>
+        </div>
+    </div>
   </div>
+  
+  
 </body>
 </html>

@@ -112,3 +112,7 @@ td {
 	font-weight: bold;
 	color:#fff;
 }
+
+.hideArea {
+    display: none;
+}

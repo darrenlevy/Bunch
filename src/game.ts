@@ -18,7 +18,9 @@ module game {
   export let player1Score: number = 0;
   export let player2Score: number = 0;
   export let deckIndex: number = 0;
+  export let resultRound: number = 1;
   let timer : ng.IPromise<any>;
+  export let showResults = false;
 
   export function init() {
     translate.setTranslations(getTranslations());
@@ -97,6 +99,9 @@ module game {
     canMakeMove = move.turnIndexAfterMove >= 0 && // game is ongoing
       params.yourPlayerIndex === move.turnIndexAfterMove; // it's my turn
     deckIndex = canMakeMove ? state.round - 1 : deckIndex;
+    if (move.turnIndexAfterMove < 0) {
+        $interval.cancel(timer);
+    }
     // Is it the computer's turn?
     isComputerTurn = canMakeMove &&
         params.playersInfo[params.yourPlayerIndex].playerId === '';
@@ -215,6 +220,105 @@ module game {
       
     return false;
   }
+  
+  export function resultRoundClicked(round: number) {
+      showResults = !showResults;
+      resultRound = round;
+  }
+  
+  export function resultIsGreen(playerIndex: number, cardIndex: number): boolean {
+    let roundIndex = resultRound - 1;
+    if (state.bunches.length <= roundIndex*2+playerIndex) {
+        return false;
+    }
+    if (state.bunches[roundIndex*2+playerIndex].cardIndices.length == 0) {
+        return false;
+    }
+    let index = state.bunches[roundIndex*2+playerIndex].cardIndices[cardIndex];
+    return state.decks[roundIndex][index][2] == "green";
+  }
+  
+  export function resultIsPink(playerIndex: number, cardIndex: number): boolean {
+    let roundIndex = resultRound - 1;
+    if (state.bunches.length <= roundIndex*2+playerIndex) {
+        return false;
+    }
+    if (state.bunches[roundIndex*2+playerIndex].cardIndices.length == 0) {
+        return false;
+    }
+    let index = state.bunches[roundIndex*2+playerIndex].cardIndices[cardIndex];
+    return state.decks[roundIndex][index][2] == "pink";
+  }
+  
+  export function resultIsOrange(playerIndex: number, cardIndex: number): boolean {
+    let roundIndex = resultRound - 1;
+    if (state.bunches.length <= roundIndex*2+playerIndex) {
+        return false;
+    }
+    if (state.bunches[roundIndex*2+playerIndex].cardIndices.length == 0) {
+        return false;
+    }
+    let index = state.bunches[roundIndex*2+playerIndex].cardIndices[cardIndex];
+    return state.decks[roundIndex][index][2] == "orange";
+  }
+  
+  export function resultIsSolid(playerIndex: number, cardIndex: number): boolean {
+    let roundIndex = resultRound - 1;
+    if (state.bunches.length <= roundIndex*2+playerIndex) {
+        return false;
+    }
+    if (state.bunches[roundIndex*2+playerIndex].cardIndices.length == 0) {
+        return false;
+    }
+    let index = state.bunches[roundIndex*2+playerIndex].cardIndices[cardIndex];
+    return state.decks[roundIndex][index][3] == "solid";
+  }
+  
+  export function resultIsDotted(playerIndex: number, cardIndex: number): boolean {
+    let roundIndex = resultRound - 1;
+    if (state.bunches.length <= roundIndex*2+playerIndex) {
+        return false;
+    }
+    if (state.bunches[roundIndex*2+playerIndex].cardIndices.length == 0) {
+        return false;
+    }
+    let index = state.bunches[roundIndex*2+playerIndex].cardIndices[cardIndex];
+    return state.decks[roundIndex][index][3] == "dotted";
+  }
+  
+  export function resultIsDouble(playerIndex: number, cardIndex: number): boolean {
+    let roundIndex = resultRound - 1;
+    if (state.bunches.length <= roundIndex*2+playerIndex) {
+        return false;
+    }
+    if (state.bunches[roundIndex*2+playerIndex].cardIndices.length == 0) {
+        return false;
+    }
+    let index = state.bunches[roundIndex*2+playerIndex].cardIndices[cardIndex];
+    return state.decks[roundIndex][index][3] == "double";
+  }
+  
+  export function getResultEmoji(playerIndex: number, cardIndex: number): String {
+    let emoji = "";
+    let roundIndex = resultRound - 1;
+    
+    if (state.bunches.length <= roundIndex*2+playerIndex) {
+        return "";
+    }
+    if (state.bunches[roundIndex*2+playerIndex].cardIndices.length == 0) {
+        return "";
+    }
+    let index = state.bunches[roundIndex*2+playerIndex].cardIndices[cardIndex];
+    
+    
+    let count = parseInt(state.decks[roundIndex][index][1]);
+    for (let i = 0; i < count; i++) {
+        emoji += state.decks[roundIndex][index][0];
+    }
+    return emoji;
+  }
+  
+  
   
   
   

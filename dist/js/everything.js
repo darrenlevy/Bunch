@@ -182,7 +182,9 @@ var game;
     game.player1Score = 0;
     game.player2Score = 0;
     game.deckIndex = 0;
+    game.resultRound = 1;
     var timer;
+    game.showResults = false;
     function init() {
         translate.setTranslations(getTranslations());
         translate.setLanguage('en');
@@ -254,6 +256,9 @@ var game;
         game.canMakeMove = game.move.turnIndexAfterMove >= 0 &&
             params.yourPlayerIndex === game.move.turnIndexAfterMove; // it's my turn
         game.deckIndex = game.canMakeMove ? game.state.round - 1 : game.deckIndex;
+        if (game.move.turnIndexAfterMove < 0) {
+            $interval.cancel(timer);
+        }
         // Is it the computer's turn?
         game.isComputerTurn = game.canMakeMove &&
             params.playersInfo[params.yourPlayerIndex].playerId === '';
@@ -370,6 +375,100 @@ var game;
         return false;
     }
     game.shouldFlip = shouldFlip;
+    function resultRoundClicked(round) {
+        game.showResults = !game.showResults;
+        game.resultRound = round;
+    }
+    game.resultRoundClicked = resultRoundClicked;
+    function resultIsGreen(playerIndex, cardIndex) {
+        var roundIndex = game.resultRound - 1;
+        if (game.state.bunches.length <= roundIndex * 2 + playerIndex) {
+            return false;
+        }
+        if (game.state.bunches[roundIndex * 2 + playerIndex].cardIndices.length == 0) {
+            return false;
+        }
+        var index = game.state.bunches[roundIndex * 2 + playerIndex].cardIndices[cardIndex];
+        return game.state.decks[roundIndex][index][2] == "green";
+    }
+    game.resultIsGreen = resultIsGreen;
+    function resultIsPink(playerIndex, cardIndex) {
+        var roundIndex = game.resultRound - 1;
+        if (game.state.bunches.length <= roundIndex * 2 + playerIndex) {
+            return false;
+        }
+        if (game.state.bunches[roundIndex * 2 + playerIndex].cardIndices.length == 0) {
+            return false;
+        }
+        var index = game.state.bunches[roundIndex * 2 + playerIndex].cardIndices[cardIndex];
+        return game.state.decks[roundIndex][index][2] == "pink";
+    }
+    game.resultIsPink = resultIsPink;
+    function resultIsOrange(playerIndex, cardIndex) {
+        var roundIndex = game.resultRound - 1;
+        if (game.state.bunches.length <= roundIndex * 2 + playerIndex) {
+            return false;
+        }
+        if (game.state.bunches[roundIndex * 2 + playerIndex].cardIndices.length == 0) {
+            return false;
+        }
+        var index = game.state.bunches[roundIndex * 2 + playerIndex].cardIndices[cardIndex];
+        return game.state.decks[roundIndex][index][2] == "orange";
+    }
+    game.resultIsOrange = resultIsOrange;
+    function resultIsSolid(playerIndex, cardIndex) {
+        var roundIndex = game.resultRound - 1;
+        if (game.state.bunches.length <= roundIndex * 2 + playerIndex) {
+            return false;
+        }
+        if (game.state.bunches[roundIndex * 2 + playerIndex].cardIndices.length == 0) {
+            return false;
+        }
+        var index = game.state.bunches[roundIndex * 2 + playerIndex].cardIndices[cardIndex];
+        return game.state.decks[roundIndex][index][3] == "solid";
+    }
+    game.resultIsSolid = resultIsSolid;
+    function resultIsDotted(playerIndex, cardIndex) {
+        var roundIndex = game.resultRound - 1;
+        if (game.state.bunches.length <= roundIndex * 2 + playerIndex) {
+            return false;
+        }
+        if (game.state.bunches[roundIndex * 2 + playerIndex].cardIndices.length == 0) {
+            return false;
+        }
+        var index = game.state.bunches[roundIndex * 2 + playerIndex].cardIndices[cardIndex];
+        return game.state.decks[roundIndex][index][3] == "dotted";
+    }
+    game.resultIsDotted = resultIsDotted;
+    function resultIsDouble(playerIndex, cardIndex) {
+        var roundIndex = game.resultRound - 1;
+        if (game.state.bunches.length <= roundIndex * 2 + playerIndex) {
+            return false;
+        }
+        if (game.state.bunches[roundIndex * 2 + playerIndex].cardIndices.length == 0) {
+            return false;
+        }
+        var index = game.state.bunches[roundIndex * 2 + playerIndex].cardIndices[cardIndex];
+        return game.state.decks[roundIndex][index][3] == "double";
+    }
+    game.resultIsDouble = resultIsDouble;
+    function getResultEmoji(playerIndex, cardIndex) {
+        var emoji = "";
+        var roundIndex = game.resultRound - 1;
+        if (game.state.bunches.length <= roundIndex * 2 + playerIndex) {
+            return "";
+        }
+        if (game.state.bunches[roundIndex * 2 + playerIndex].cardIndices.length == 0) {
+            return "";
+        }
+        var index = game.state.bunches[roundIndex * 2 + playerIndex].cardIndices[cardIndex];
+        var count = parseInt(game.state.decks[roundIndex][index][1]);
+        for (var i = 0; i < count; i++) {
+            emoji += game.state.decks[roundIndex][index][0];
+        }
+        return emoji;
+    }
+    game.getResultEmoji = getResultEmoji;
     //   export function shouldShowImage(row: number, col: number): boolean {
     //     let cell = state.board[row][col];
     //     return cell !== "";
