@@ -67,7 +67,7 @@ var game;
         $rootScope.$apply(function () {
             log.info("Animation ended");
             game.animationEnded = true;
-            sendComputerMove();
+            //sendComputerMove();
         });
     }
     function sendComputerMove() {
@@ -98,15 +98,8 @@ var game;
         if (game.isComputerTurn) {
             // To make sure the player won't click something and send a move instead of the computer sending a move.
             game.canMakeMove = false;
-            // We calculate the AI move only after the animation finishes,
-            // because if we call aiService now
-            // then the animation will be paused until the javascript finishes.
-            if (!game.state.bunches) {
-                // This is the first move in the match, so
-                // there is not going to be an animation, so
-                // call sendComputerMove() now (can happen in ?onlyAIs mode)
-                sendComputerMove();
-            }
+            //if (!state.bunches) {
+            sendComputerMove();
         }
     }
     function cardClicked(cardIndex) {
@@ -123,6 +116,9 @@ var game;
         }
         else {
             game.cards.splice(index, 1);
+        }
+        if (game.cards.length >= 3) {
+            submitMove();
         }
     }
     game.cardClicked = cardClicked;
@@ -157,6 +153,7 @@ var game;
         }
         catch (e) {
             log.info(["Invalid cards:", game.cards]);
+            game.cards = [];
             return;
         }
     }
@@ -209,7 +206,9 @@ var game;
     }
     game.shouldFlip = shouldFlip;
     function resultRoundClicked(round) {
-        game.showResults = !game.showResults;
+        if (game.resultRound == round) {
+            game.showResults = !game.showResults;
+        }
         game.resultRound = round;
     }
     game.resultRoundClicked = resultRoundClicked;

@@ -14,23 +14,32 @@ module aiService {
     let seconds = 10;
     let possibleMoves: IMove[] = [];
     for (let i = 0; i < gameLogic.DECK_SIZE; i++) {
-      for (let j = 0; j < gameLogic.DECK_SIZE; j++) {
-        try {
-          let deck = state.decks[state.round];
-          let card1 = deck[i];
-          let card2 = deck[j];
-          let points = gameLogic.pointsForMove([card1, card2], seconds);
-          if (points >= 0) {
-            possibleMoves.push(gameLogic.createMove(state, [i, j], seconds, turnIndexBeforeMove, state.round, state.scores));
+      for (let j = i+1; j < gameLogic.DECK_SIZE; j++) {
+          for (let k = j+1; k < gameLogic.DECK_SIZE; k++) {
+            try {
+                if (state.bunches.length % 2 == 1 && state.bunches[state.bunches.length-1].cardIndices.sort() == [i, j, k].sort()) {
+                    continue; //Don't let AI make same move as last player
+                }
+                let deck = state.decks[state.round-1];
+                let card1 = deck[i];
+                let card2 = deck[j];
+                let card3 = deck[k];
+                let points = gameLogic.pointsForMove([card1, card2, card3], seconds);
+                
+                if (points >= 0) {
+                    possibleMoves.push(gameLogic.createMove(state, [i, j, k], seconds, turnIndexBeforeMove, state.round, state.scores));
+                }
+            } catch (e) {
+                // Invalid move
+            }
           }
-        } catch (e) {
-          // The cell in that position was full.
-        }
       }
     }
+
     if (possibleMoves.length == 0) {
         possibleMoves.push(gameLogic.createMove(state, [], seconds, turnIndexBeforeMove, state.round, state.scores));
     }
+
     return possibleMoves;
   }
 
@@ -43,8 +52,10 @@ module aiService {
   export function createComputerMove(
       move: IMove, alphaBetaLimits: IAlphaBetaLimits): IMove {
     // We use alpha-beta search, where the search states are TicTacToe moves.
-    return alphaBetaService.alphaBetaDecision(
-        move, move.turnIndexAfterMove, getNextStates, getStateScoreForIndex0, null, alphaBetaLimits);
+   //return alphaBetaService.alphaBetaDecision(
+   //     move, move.turnIndexAfterMove, getNextStates, getStateScoreForIndex0, null, alphaBetaLimits);
+   let possibleMoves = getNextStates(move,move.turnIndexAfterMove)
+   return possibleMoves[possibleMoves.length-1];
   }
 
   function getStateScoreForIndex0(move: IMove, playerIndex: number): number {

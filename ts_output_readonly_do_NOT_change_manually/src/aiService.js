@@ -15,17 +15,23 @@ var aiService;
         var seconds = 10;
         var possibleMoves = [];
         for (var i = 0; i < gameLogic.DECK_SIZE; i++) {
-            for (var j = 0; j < gameLogic.DECK_SIZE; j++) {
-                try {
-                    var deck = state.decks[state.round];
-                    var card1 = deck[i];
-                    var card2 = deck[j];
-                    var points = gameLogic.pointsForMove([card1, card2], seconds);
-                    if (points >= 0) {
-                        possibleMoves.push(gameLogic.createMove(state, [i, j], seconds, turnIndexBeforeMove, state.round, state.scores));
+            for (var j = i + 1; j < gameLogic.DECK_SIZE; j++) {
+                for (var k = j + 1; k < gameLogic.DECK_SIZE; k++) {
+                    try {
+                        if (state.bunches.length % 2 == 1 && state.bunches[state.bunches.length - 1].cardIndices.sort() == [i, j, k].sort()) {
+                            continue; //Don't let AI make same move as last player
+                        }
+                        var deck = state.decks[state.round - 1];
+                        var card1 = deck[i];
+                        var card2 = deck[j];
+                        var card3 = deck[k];
+                        var points = gameLogic.pointsForMove([card1, card2, card3], seconds);
+                        if (points >= 0) {
+                            possibleMoves.push(gameLogic.createMove(state, [i, j, k], seconds, turnIndexBeforeMove, state.round, state.scores));
+                        }
                     }
-                }
-                catch (e) {
+                    catch (e) {
+                    }
                 }
             }
         }
@@ -43,7 +49,10 @@ var aiService;
      */
     function createComputerMove(move, alphaBetaLimits) {
         // We use alpha-beta search, where the search states are TicTacToe moves.
-        return alphaBetaService.alphaBetaDecision(move, move.turnIndexAfterMove, getNextStates, getStateScoreForIndex0, null, alphaBetaLimits);
+        //return alphaBetaService.alphaBetaDecision(
+        //     move, move.turnIndexAfterMove, getNextStates, getStateScoreForIndex0, null, alphaBetaLimits);
+        var possibleMoves = getNextStates(move, move.turnIndexAfterMove);
+        return possibleMoves[possibleMoves.length - 1];
     }
     aiService.createComputerMove = createComputerMove;
     function getStateScoreForIndex0(move, playerIndex) {

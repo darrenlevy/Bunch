@@ -74,7 +74,7 @@ module game {
     $rootScope.$apply(function () {
       log.info("Animation ended");
       animationEnded = true;
-      sendComputerMove();
+      //sendComputerMove();
     });
   }
 
@@ -105,18 +105,13 @@ module game {
     // Is it the computer's turn?
     isComputerTurn = canMakeMove &&
         params.playersInfo[params.yourPlayerIndex].playerId === '';
+
     if (isComputerTurn) {
       // To make sure the player won't click something and send a move instead of the computer sending a move.
       canMakeMove = false;
-      // We calculate the AI move only after the animation finishes,
-      // because if we call aiService now
-      // then the animation will be paused until the javascript finishes.
-      if (!state.bunches) {
-        // This is the first move in the match, so
-        // there is not going to be an animation, so
-        // call sendComputerMove() now (can happen in ?onlyAIs mode)
+      //if (!state.bunches) {
         sendComputerMove();
-      }
+      //}
     }
   }
   
@@ -133,6 +128,9 @@ module game {
           cards.push(cardIndex);
       } else {
           cards.splice(index, 1);
+      }
+      if (cards.length >= 3) {
+          submitMove();
       }
   }
   
@@ -168,6 +166,7 @@ module game {
       moveService.makeMove(nextMove);
     } catch (e) {
       log.info(["Invalid cards:", cards]);
+      cards = [];
       return;
     }
   }
@@ -222,7 +221,9 @@ module game {
   }
   
   export function resultRoundClicked(round: number) {
-      showResults = !showResults;
+      if (resultRound == round ) {
+          showResults = !showResults;
+      }
       resultRound = round;
   }
   

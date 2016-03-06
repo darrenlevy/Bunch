@@ -40,7 +40,7 @@ module gameLogic {
   }
   
   function getRandomSymbol(): string {
-      let symbols = ["♡", "✌", "☺"];
+      let symbols = ["♡", "✰", "☺"];
       let index = Math.floor(Math.random()*100 % NUMBER_OF_TYPES);
       return symbols[index];
   }
@@ -103,7 +103,7 @@ module gameLogic {
             }
           }
           points += (110 - seconds) * symbols.length;
-          if (symbols.length !== 1 && symbols.length !== cards.length) {
+          if (symbols.length !== 1 && symbols.length !== NUMBER_OF_TYPES) {
               return -1;
           }
       }
@@ -135,12 +135,10 @@ module gameLogic {
     for (let i = 0; i < cardIndices.length; i++) {
         cards.push(deck[cardIndices[i]]);
     }
-    if (cards.length === 1) {
-      throw new Error("One card is not a legal move!");
-    }
-
+    
     let points = pointsForMove(cards, seconds);
     if (points < 0) {
+        console.log(cardIndices)
         throw new Error("That is not a legal move!");
     }
     let scoresAfterMove = angular.copy(scores);

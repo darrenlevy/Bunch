@@ -82,8 +82,8 @@
   </div>
 
   <div id="gameArea">
-    <div ng-repeat="row in [0, 1, 2, 3]" class="row" style="top:{{row * 25}}%" ng-class="{hideArea: game.showResults}">
-        <div ng-repeat="col in [0, 1, 2, 3]" class="column" style="left:{{col * 25}}%;"
+    <div ng-repeat="row in [0, 1, 2, 3]" class="row" style="top:{{row * 20 + 20}}%" ng-class="{hideArea: game.showResults}">
+        <div ng-repeat="col in [0, 1, 2, 3]" class="column" style="left:{{col * 22 + 10}}%;"
             ng-class="{
                 green: game.isGreen(row * 4 + col),
                 pink: game.isPink(row * 4 + col),
