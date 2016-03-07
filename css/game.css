@@ -1,3 +1,16 @@
+body {
+    
+
+
+
+
+
+background: #8e9eab; /* fallback for old browsers */
+background: -webkit-linear-gradient(to left, #8e9eab , #eef2f3); /* Chrome 10-25, Safari 5.1-6 */
+background: linear-gradient(to left, #8e9eab , #eef2f3); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+              
+}
+
 .row {
   position: absolute;
   left: 0;
@@ -6,12 +19,11 @@
 }
 
 .column {
+  background: white;
   position: absolute;
   top: 0;
-  width: 20%;
   height: 75%;
   text-align: center;
-  font-size: 40px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -19,18 +31,14 @@
   cursor: pointer;
 }
 
+.card {
+    width: 20%;
+    font-size: 40px;
+}
+
 .menu {
-  position: absolute;
-  top: 0;
-  width: 33%;
-  height: 75%;
-  text-align: center;
+  width: 28%;
   font-size: 20px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  resize: vertical;
-  cursor: pointer;
 }
 
 .emoji {

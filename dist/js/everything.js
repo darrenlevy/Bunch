@@ -71,9 +71,12 @@ var gameLogic;
      * Returns 0 or more points if cards represent valid move, -1 otherwise
      */
     function pointsForMove(cards, seconds) {
-        var points = 0;
+        var points = 10 - seconds > 0 ? 10 - seconds : 0;
         if (cards.length === 0) {
-            return 0;
+            return points;
+        }
+        else if (cards.length !== gameLogic.NUMBER_OF_TYPES) {
+            return -1;
         }
         for (var i = 0; i < gameLogic.NUMBER_OF_ELEMENTS_PER_CARD; i++) {
             var symbols = [];
@@ -83,7 +86,7 @@ var gameLogic;
                     symbols.push(symbol);
                 }
             }
-            points += (110 - seconds) * symbols.length;
+            points += symbols.length;
             if (symbols.length !== 1 && symbols.length !== gameLogic.NUMBER_OF_TYPES) {
                 return -1;
             }
@@ -109,7 +112,6 @@ var gameLogic;
         }
         var points = pointsForMove(cards, seconds);
         if (points < 0) {
-            console.log(cardIndices);
             throw new Error("That is not a legal move!");
         }
         var scoresAfterMove = angular.copy(scores);
@@ -155,8 +157,10 @@ var gameLogic;
         var scores = stateBeforeMove ? stateBeforeMove.scores : [0, 0];
         var expectedMove = createMove(stateBeforeMove, cardIndices, seconds, turnIndexBeforeMove, round, scores);
         if (!angular.equals(move, expectedMove)) {
-            throw new Error("Move calculated=" + angular.toJson(expectedMove, true) +
-                ", move expected=" + angular.toJson(move, true));
+            //throw new Error("Move calculated=" + angular.toJson(expectedMove, true) +
+            //  ", move expected=" + angular.toJson(move, true))
+            throw new Error("Move calculated=" + expectedMove.stateAfterMove.scores +
+                ", move expected=" + move.stateAfterMove.scores);
         }
     }
     gameLogic.checkMoveOk = checkMoveOk;
@@ -267,6 +271,10 @@ var game;
             sendComputerMove();
         }
     }
+    function gameIsOver() {
+        return game.move.turnIndexAfterMove < 0;
+    }
+    game.gameIsOver = gameIsOver;
     function cardClicked(cardIndex) {
         if (game.state && game.state.bunches.length % 2 == 1) {
             var lastBunchIndex = game.state.bunches.length - 1;
@@ -299,11 +307,13 @@ var game;
         game.player2Score = scores[1];
         timer = $interval(function () {
             game.seconds++;
-            if (game.seconds > 99) {
-                $interval.cancel(timer);
-            }
         }, 1000);
     }
+    function passMove() {
+        game.cards = [];
+        submitMove();
+    }
+    game.passMove = passMove;
     function submitMove() {
         if (window.location.search === '?throwException') {
             throw new Error("Throwing the error because URL has '?throwException'");
@@ -379,6 +389,9 @@ var game;
     game.resultRoundClicked = resultRoundClicked;
     function resultIsGreen(playerIndex, cardIndex) {
         var roundIndex = game.resultRound - 1;
+        if (roundIndex % 2 == 1) {
+            playerIndex = 1 - playerIndex;
+        }
         if (game.state.bunches.length <= roundIndex * 2 + playerIndex) {
             return false;
         }
@@ -391,6 +404,9 @@ var game;
     game.resultIsGreen = resultIsGreen;
     function resultIsPink(playerIndex, cardIndex) {
         var roundIndex = game.resultRound - 1;
+        if (roundIndex % 2 == 1) {
+            playerIndex = 1 - playerIndex;
+        }
         if (game.state.bunches.length <= roundIndex * 2 + playerIndex) {
             return false;
         }
@@ -403,6 +419,9 @@ var game;
     game.resultIsPink = resultIsPink;
     function resultIsOrange(playerIndex, cardIndex) {
         var roundIndex = game.resultRound - 1;
+        if (roundIndex % 2 == 1) {
+            playerIndex = 1 - playerIndex;
+        }
         if (game.state.bunches.length <= roundIndex * 2 + playerIndex) {
             return false;
         }
@@ -415,6 +434,9 @@ var game;
     game.resultIsOrange = resultIsOrange;
     function resultIsSolid(playerIndex, cardIndex) {
         var roundIndex = game.resultRound - 1;
+        if (roundIndex % 2 == 1) {
+            playerIndex = 1 - playerIndex;
+        }
         if (game.state.bunches.length <= roundIndex * 2 + playerIndex) {
             return false;
         }
@@ -427,6 +449,9 @@ var game;
     game.resultIsSolid = resultIsSolid;
     function resultIsDotted(playerIndex, cardIndex) {
         var roundIndex = game.resultRound - 1;
+        if (roundIndex % 2 == 1) {
+            playerIndex = 1 - playerIndex;
+        }
         if (game.state.bunches.length <= roundIndex * 2 + playerIndex) {
             return false;
         }
@@ -439,6 +464,9 @@ var game;
     game.resultIsDotted = resultIsDotted;
     function resultIsDouble(playerIndex, cardIndex) {
         var roundIndex = game.resultRound - 1;
+        if (roundIndex % 2 == 1) {
+            playerIndex = 1 - playerIndex;
+        }
         if (game.state.bunches.length <= roundIndex * 2 + playerIndex) {
             return false;
         }
@@ -452,6 +480,9 @@ var game;
     function getResultEmoji(playerIndex, cardIndex) {
         var emoji = "";
         var roundIndex = game.resultRound - 1;
+        if (roundIndex % 2 == 1) {
+            playerIndex = 1 - playerIndex;
+        }
         if (game.state.bunches.length <= roundIndex * 2 + playerIndex) {
             return "";
         }

@@ -115,6 +115,10 @@ module game {
     }
   }
   
+  export function gameIsOver(): boolean {
+      return move.turnIndexAfterMove < 0;
+  }
+  
   export function cardClicked(cardIndex: number) {
       if (state && state.bunches.length % 2 == 1) {
         let lastBunchIndex = state.bunches.length-1;
@@ -146,10 +150,12 @@ module game {
        player2Score = scores[1];
        timer = $interval(function () {
                 seconds++;
-                if (seconds > 99) {
-                $interval.cancel(timer);
-                }
        }, 1000);
+  }
+
+  export function passMove (): void {
+      cards = [];
+      submitMove();
   }
 
   export function submitMove (): void {
@@ -229,7 +235,7 @@ module game {
   
   export function resultIsGreen(playerIndex: number, cardIndex: number): boolean {
     let roundIndex = resultRound - 1;
-    if (roundIndex % 2 == 0) {
+    if (roundIndex % 2 == 1) {
         playerIndex = 1 - playerIndex;
     }
     if (state.bunches.length <= roundIndex*2+playerIndex) {

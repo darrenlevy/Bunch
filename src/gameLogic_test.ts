@@ -13,20 +13,21 @@ describe("In Bunches", function() {
   let INVALID_1_CARD_MOVE = [0];
   let NO_PREVIOUS_MOVE : number[] = null;
   let TIE_SCORE = [0, 0];
-  let SECONDS = 10;
+  let SECONDS = 5;
   let NO_ROUND = 0;
   let FIRST_ROUND = 1;
   let SECOND_ROUND = 2;
   let LAST_ROUND = 3;
   let NO_SCORE = [0, 0];
-  let FIRST_SCORE = [600, 0];
-  let FIRST_ROUND_SCORE = [600, 600];
-  let SECOND_SCORE = [600, 1200];
-  let SECOND_ROUND_SCORE = [1200, 1200];
-  let LAST_ROUND_SCORE = [1800, 1770];
-  let LAST_ROUND_SCORE_PLAYER_2_WINS = [1800, 1830];
-  let LAST_ROUND_SCORE_TIE = [1800, 1800];
-  let THIRD_SCORE = [1800, 1200];
+  let NO_MOVE_SCORE = [5, 0];
+  let FIRST_SCORE = [11, 0];
+  let FIRST_ROUND_SCORE = [11, 11];
+  let SECOND_SCORE = [11, 22];
+  let SECOND_ROUND_SCORE = [16, 13];
+  let THIRD_SCORE = [20, 19];
+  let LAST_ROUND_SCORE = [20, 19];
+  let LAST_ROUND_SCORE_PLAYER_2_WINS = [20, 35];
+  let LAST_ROUND_SCORE_TIE = [20, 20];
   let NO_DECK : string[][] = null;
   let DECK = [
       [':|', '1', 'red', 'solid'],
@@ -134,7 +135,7 @@ describe("In Bunches", function() {
 
   it("make no move from initial state is OK", function() {
     expectMove(OK, PLAYER_1_TURN, DECKS, NO_PREVIOUS_MOVE, NO_MOVE, SECONDS,
-      FIRST_ROUND, FIRST_ROUND, NO_SCORE, NO_SCORE, PLAYER_2_TURN, NO_ONE_WINS);   
+      FIRST_ROUND, FIRST_ROUND, NO_SCORE, NO_MOVE_SCORE, PLAYER_2_TURN, NO_ONE_WINS);   
   });
 
   it("make a valid move from initial state, but setting the turn to yourself is illegal", function() {
@@ -178,7 +179,7 @@ describe("In Bunches", function() {
   });
   
   it("player 2 makes a valid move to end game and lose is OK", function() {
-    expectMove(OK, PLAYER_2_TURN, DECKS, VALID_MOVE, VALID_MOVE, SECONDS + 5,
+    expectMove(OK, PLAYER_2_TURN, DECKS, VALID_MOVE, NO_MOVE, SECONDS + 5,
       LAST_ROUND, LAST_ROUND + 1, THIRD_SCORE, LAST_ROUND_SCORE, NO_ONE_TURN, PLAYER_1_WINS); 
   });
   
@@ -188,7 +189,7 @@ describe("In Bunches", function() {
   });
   
   it("player 2 makes a valid move to end game and ties OK", function() {
-    expectMove(OK, PLAYER_2_TURN, DECKS, VALID_MOVE, VALID_MOVE, SECONDS,
+    expectMove(OK, PLAYER_2_TURN, DECKS, VALID_MOVE, NO_MOVE, SECONDS+4,
       LAST_ROUND, LAST_ROUND + 1, THIRD_SCORE, LAST_ROUND_SCORE_TIE, NO_ONE_TURN, TIE_SCORE); 
   });
 

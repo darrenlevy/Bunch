@@ -102,6 +102,10 @@ var game;
             sendComputerMove();
         }
     }
+    function gameIsOver() {
+        return game.move.turnIndexAfterMove < 0;
+    }
+    game.gameIsOver = gameIsOver;
     function cardClicked(cardIndex) {
         if (game.state && game.state.bunches.length % 2 == 1) {
             var lastBunchIndex = game.state.bunches.length - 1;
@@ -134,11 +138,13 @@ var game;
         game.player2Score = scores[1];
         timer = $interval(function () {
             game.seconds++;
-            if (game.seconds > 99) {
-                $interval.cancel(timer);
-            }
         }, 1000);
     }
+    function passMove() {
+        game.cards = [];
+        submitMove();
+    }
+    game.passMove = passMove;
     function submitMove() {
         if (window.location.search === '?throwException') {
             throw new Error("Throwing the error because URL has '?throwException'");
@@ -214,7 +220,7 @@ var game;
     game.resultRoundClicked = resultRoundClicked;
     function resultIsGreen(playerIndex, cardIndex) {
         var roundIndex = game.resultRound - 1;
-        if (roundIndex % 2 == 0) {
+        if (roundIndex % 2 == 1) {
             playerIndex = 1 - playerIndex;
         }
         if (game.state.bunches.length <= roundIndex * 2 + playerIndex) {
