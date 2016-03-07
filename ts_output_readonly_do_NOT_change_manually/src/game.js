@@ -214,6 +214,9 @@ var game;
     game.resultRoundClicked = resultRoundClicked;
     function resultIsGreen(playerIndex, cardIndex) {
         var roundIndex = game.resultRound - 1;
+        if (roundIndex % 2 == 0) {
+            playerIndex = 1 - playerIndex;
+        }
         if (game.state.bunches.length <= roundIndex * 2 + playerIndex) {
             return false;
         }
@@ -226,6 +229,9 @@ var game;
     game.resultIsGreen = resultIsGreen;
     function resultIsPink(playerIndex, cardIndex) {
         var roundIndex = game.resultRound - 1;
+        if (roundIndex % 2 == 1) {
+            playerIndex = 1 - playerIndex;
+        }
         if (game.state.bunches.length <= roundIndex * 2 + playerIndex) {
             return false;
         }
@@ -238,6 +244,9 @@ var game;
     game.resultIsPink = resultIsPink;
     function resultIsOrange(playerIndex, cardIndex) {
         var roundIndex = game.resultRound - 1;
+        if (roundIndex % 2 == 1) {
+            playerIndex = 1 - playerIndex;
+        }
         if (game.state.bunches.length <= roundIndex * 2 + playerIndex) {
             return false;
         }
@@ -250,6 +259,9 @@ var game;
     game.resultIsOrange = resultIsOrange;
     function resultIsSolid(playerIndex, cardIndex) {
         var roundIndex = game.resultRound - 1;
+        if (roundIndex % 2 == 1) {
+            playerIndex = 1 - playerIndex;
+        }
         if (game.state.bunches.length <= roundIndex * 2 + playerIndex) {
             return false;
         }
@@ -262,6 +274,9 @@ var game;
     game.resultIsSolid = resultIsSolid;
     function resultIsDotted(playerIndex, cardIndex) {
         var roundIndex = game.resultRound - 1;
+        if (roundIndex % 2 == 1) {
+            playerIndex = 1 - playerIndex;
+        }
         if (game.state.bunches.length <= roundIndex * 2 + playerIndex) {
             return false;
         }
@@ -274,6 +289,9 @@ var game;
     game.resultIsDotted = resultIsDotted;
     function resultIsDouble(playerIndex, cardIndex) {
         var roundIndex = game.resultRound - 1;
+        if (roundIndex % 2 == 1) {
+            playerIndex = 1 - playerIndex;
+        }
         if (game.state.bunches.length <= roundIndex * 2 + playerIndex) {
             return false;
         }
@@ -287,6 +305,9 @@ var game;
     function getResultEmoji(playerIndex, cardIndex) {
         var emoji = "";
         var roundIndex = game.resultRound - 1;
+        if (roundIndex % 2 == 1) {
+            playerIndex = 1 - playerIndex;
+        }
         if (game.state.bunches.length <= roundIndex * 2 + playerIndex) {
             return "";
         }

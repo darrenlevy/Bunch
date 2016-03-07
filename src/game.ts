@@ -229,6 +229,9 @@ module game {
   
   export function resultIsGreen(playerIndex: number, cardIndex: number): boolean {
     let roundIndex = resultRound - 1;
+    if (roundIndex % 2 == 0) {
+        playerIndex = 1 - playerIndex;
+    }
     if (state.bunches.length <= roundIndex*2+playerIndex) {
         return false;
     }
@@ -241,6 +244,9 @@ module game {
   
   export function resultIsPink(playerIndex: number, cardIndex: number): boolean {
     let roundIndex = resultRound - 1;
+    if (roundIndex % 2 == 1) {
+        playerIndex = 1 - playerIndex;
+    }
     if (state.bunches.length <= roundIndex*2+playerIndex) {
         return false;
     }
@@ -253,6 +259,9 @@ module game {
   
   export function resultIsOrange(playerIndex: number, cardIndex: number): boolean {
     let roundIndex = resultRound - 1;
+    if (roundIndex % 2 == 1) {
+        playerIndex = 1 - playerIndex;
+    }
     if (state.bunches.length <= roundIndex*2+playerIndex) {
         return false;
     }
@@ -265,6 +274,9 @@ module game {
   
   export function resultIsSolid(playerIndex: number, cardIndex: number): boolean {
     let roundIndex = resultRound - 1;
+    if (roundIndex % 2 == 1) {
+        playerIndex = 1 - playerIndex;
+    }
     if (state.bunches.length <= roundIndex*2+playerIndex) {
         return false;
     }
@@ -277,6 +289,9 @@ module game {
   
   export function resultIsDotted(playerIndex: number, cardIndex: number): boolean {
     let roundIndex = resultRound - 1;
+    if (roundIndex % 2 == 1) {
+        playerIndex = 1 - playerIndex;
+    }
     if (state.bunches.length <= roundIndex*2+playerIndex) {
         return false;
     }
@@ -289,6 +304,9 @@ module game {
   
   export function resultIsDouble(playerIndex: number, cardIndex: number): boolean {
     let roundIndex = resultRound - 1;
+    if (roundIndex % 2 == 1) {
+        playerIndex = 1 - playerIndex;
+    }
     if (state.bunches.length <= roundIndex*2+playerIndex) {
         return false;
     }
@@ -302,6 +320,9 @@ module game {
   export function getResultEmoji(playerIndex: number, cardIndex: number): String {
     let emoji = "";
     let roundIndex = resultRound - 1;
+    if (roundIndex % 2 == 1) {
+        playerIndex = 1 - playerIndex;
+    }
     
     if (state.bunches.length <= roundIndex*2+playerIndex) {
         return "";
