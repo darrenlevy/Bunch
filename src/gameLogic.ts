@@ -12,7 +12,7 @@ interface IState {
 
 module gameLogic {
   export const DECK_SIZE = 16;
-  export const TOTAL_ROUNDS = 3;
+  export const TOTAL_ROUNDS = 2;
   export const NUMBER_OF_PLAYERS = 2;
   export const NUMBER_OF_ELEMENTS_PER_CARD = 4;
   export const NUMBER_OF_TYPES = 3;

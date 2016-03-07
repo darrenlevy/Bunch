@@ -1,7 +1,7 @@
 var gameLogic;
 (function (gameLogic) {
     gameLogic.DECK_SIZE = 16;
-    gameLogic.TOTAL_ROUNDS = 3;
+    gameLogic.TOTAL_ROUNDS = 2;
     gameLogic.NUMBER_OF_PLAYERS = 2;
     gameLogic.NUMBER_OF_ELEMENTS_PER_CARD = 4;
     gameLogic.NUMBER_OF_TYPES = 3;

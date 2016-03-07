@@ -50,12 +50,12 @@ var game;
                 es: "Reglas de Los Manojos",
             },
             RULES_SLIDE1: {
-                en: "You and your opponent take turns finding a Bunch. A Bunch is 2 or 3 cards where the number of emoji, color of emoji, the emoji itself and border of the card are all the same or all different.",
-                es: "Usted y su oponente se da vuelta para encontrar un manojo. Un manojo es 2 o 3 cartas donde el número de emoji, el color de emoji, el propio emoji y el borde de la tarjeta son todos iguales o diferentes.",
+                en: "You and your opponent take turns finding a Bunch. A Bunch is 3 cards where the number of emoji, color of emoji, the emoji itself and border of the card are all the same or all different.",
+                es: "Usted y su oponente se da vuelta para encontrar un manojo. Un manojo es 3 cartas donde el número de emoji, el color de emoji, el propio emoji y el borde de la tarjeta son todos iguales o diferentes.",
             },
             RULES_SLIDE2: {
-                en: "The first player goes, then the second player goes with the same cards for each round. After 3 rounds, the player with the most points wins.",
-                es: "El primer jugador pasa, entonces el segundo jugador va con las mismas cartas para cada ronda. Después de 3 rondas, el jugador con más puntos gana.",
+                en: "There are 2 rounds. Player 1 starts the first round. Player 2 starts the second round. You receive 1 point for similarities and 3 points for differences.",
+                es: "Hay 2 rondas. El jugador 1 comienza la primera ronda. El jugador 2 se inicia la segunda ronda. Recibe 1 punto por similitudes y 3 puntos por diferencias.",
             },
             CLOSE: {
                 en: "Close",
