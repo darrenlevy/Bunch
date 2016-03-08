@@ -1,14 +1,5 @@
-body {
-    
-
-
-
-
-
-background: #8e9eab; /* fallback for old browsers */
-background: -webkit-linear-gradient(to left, #8e9eab , #eef2f3); /* Chrome 10-25, Safari 5.1-6 */
-background: linear-gradient(to left, #8e9eab , #eef2f3); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-              
+body{
+    background:rgba(0, 0, 0, 0.05)!important;
 }
 
 .row {
@@ -19,16 +10,19 @@ background: linear-gradient(to left, #8e9eab , #eef2f3); /* W3C, IE 10+/ Edge, F
 }
 
 .column {
-  background: white;
+  background:white;
   position: absolute;
   top: 0;
-  height: 75%;
+  height: 65%;
   text-align: center;
   display: flex;
   flex-direction: column;
   justify-content: center;
   resize: vertical;
   cursor: pointer;
+
+  box-shadow: 0 0 5px 3px rgba(0, 0, 0, 0.33);
+
 }
 
 .card {
@@ -47,14 +41,22 @@ background: linear-gradient(to left, #8e9eab , #eef2f3); /* W3C, IE 10+/ Edge, F
 }
 
 @media (max-width: 1000px) {
-  .column {
+  .card {
       font-size: 25px;
+  }
+  
+  .menu {
+      font-size: 15px;
   }
 }
 
 @media (max-width: 500px) {
-  .column {
+  .card {
       font-size: 15px;
+  }
+  
+  .menu {
+      font-size: 10px;
   }
 }
 
@@ -71,19 +73,19 @@ background: linear-gradient(to left, #8e9eab , #eef2f3); /* W3C, IE 10+/ Edge, F
 }
 
 .solid {
-    border: 7px solid black;
+    border: 4px solid rgba(255, 0, 0, 0.3);
 }
 
 .dotted {
-    border: 7px dotted black;
+    border: 4px dotted rgba(255, 0, 0, 0.3);
 }
 
 .double {
-    border: 7px double black;
+    border: 7px double rgba(255, 0, 0, 0.3);
 }
 
 .selected {
-    border-color: blue;
+      box-shadow: 0 0 5px 5px rgba(0, 0, 255, 0.3);
 }
     
 .slowlyAppear {
@@ -100,7 +102,7 @@ td {
 }
 
 .currentPlayer {
-  color: aqua;  
+  color:  rgba(0, 0, 255, 0.3);  
 }
 
 .flipped {
