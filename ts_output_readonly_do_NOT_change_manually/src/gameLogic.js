@@ -73,7 +73,7 @@ var gameLogic;
     function pointsForMove(cards, seconds) {
         var points = 10 - seconds > 0 ? 10 - seconds : 0;
         if (cards.length === 0) {
-            return points;
+            return 10 - seconds > 4 ? 4 : 10 - seconds > 0 ? 10 - seconds : 0;
         }
         else if (cards.length !== gameLogic.NUMBER_OF_TYPES) {
             return -1;

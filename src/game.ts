@@ -181,7 +181,7 @@ module game {
     let emoji = "";
     let count = parseInt(state.decks[deckIndex][index][1])
     for (let i = 0; i < count; i++) {
-        emoji += state.decks[deckIndex][index][0];
+        emoji += state.decks[deckIndex][index][0] + " ";
     }
     return emoji;
   }

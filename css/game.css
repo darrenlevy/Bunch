@@ -22,7 +22,7 @@ body{
   cursor: pointer;
 
   box-shadow: 0 0 5px 3px rgba(0, 0, 0, 0.33);
-
+  border-radius: 5px;
 }
 
 .card {
@@ -42,17 +42,17 @@ body{
 
 @media (max-width: 1000px) {
   .card {
-      font-size: 25px;
+      font-size: 20px;
   }
   
   .menu {
-      font-size: 15px;
+      font-size: 12px;
   }
 }
 
 @media (max-width: 500px) {
   .card {
-      font-size: 15px;
+      font-size: 10px;
   }
   
   .menu {
@@ -73,15 +73,15 @@ body{
 }
 
 .solid {
-    border: 4px solid rgba(255, 0, 0, 0.3);
+    border: 7px solid rgba(255, 0, 0, 0.3);
 }
 
 .dotted {
-    border: 4px dotted rgba(255, 0, 0, 0.3);
+    border: 7px dotted rgba(255, 0, 0, 0.3);
 }
 
 .double {
-    border: 7px double rgba(255, 0, 0, 0.3);
+    border: 10px double rgba(255, 0, 0, 0.3);
 }
 
 .selected {

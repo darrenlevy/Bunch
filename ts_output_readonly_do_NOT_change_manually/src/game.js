@@ -168,7 +168,7 @@ var game;
         var emoji = "";
         var count = parseInt(game.state.decks[game.deckIndex][index][1]);
         for (var i = 0; i < count; i++) {
-            emoji += game.state.decks[game.deckIndex][index][0];
+            emoji += game.state.decks[game.deckIndex][index][0] + " ";
         }
         return emoji;
     }
