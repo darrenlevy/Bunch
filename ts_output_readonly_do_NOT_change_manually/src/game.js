@@ -17,6 +17,7 @@ var game;
     game.player2Score = 0;
     game.deckIndex = 0;
     game.resultRound = 1;
+    game.roundStarted = false;
     var timer;
     game.showResults = false;
     function init() {
@@ -107,6 +108,22 @@ var game;
         return game.move.turnIndexAfterMove < 0;
     }
     game.gameIsOver = gameIsOver;
+    function isWinner(playerIndex) {
+        if (!gameIsOver()) {
+            return false;
+        }
+        if (playerIndex == 0) {
+            return game.player1Score == game.player2Score;
+        }
+        if (playerIndex == 1) {
+            return game.player1Score > game.player2Score;
+        }
+        if (playerIndex == 2) {
+            return game.player1Score < game.player2Score;
+        }
+        return false;
+    }
+    game.isWinner = isWinner;
     function cardClicked(cardIndex) {
         if (game.state && game.state.bunches.length % 2 == 1) {
             var lastBunchIndex = game.state.bunches.length - 1;
@@ -135,15 +152,23 @@ var game;
         return game.move.turnIndexAfterMove == playerIndex;
     }
     game.isCurrentPlayerIndex = isCurrentPlayerIndex;
+    function startClicked() {
+        if (gameIsOver()) {
+            return;
+        }
+        game.roundStarted = true;
+        timer = $interval(function () {
+            game.seconds++;
+        }, 1000);
+    }
+    game.startClicked = startClicked;
     function resetBoard(scores) {
         $interval.cancel(timer);
+        game.roundStarted = false;
         game.cards = [];
         game.seconds = 0;
         game.player1Score = scores[0];
         game.player2Score = scores[1];
-        timer = $interval(function () {
-            game.seconds++;
-        }, 1000);
     }
     function passMove() {
         game.cards = [];

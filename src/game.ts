@@ -20,6 +20,7 @@ module game {
   export let player2Score: number = 0;
   export let deckIndex: number = 0;
   export let resultRound: number = 1;
+  export let roundStarted = false;
   let timer : ng.IPromise<any>;
   export let showResults = false;
 
@@ -120,6 +121,22 @@ module game {
       return move.turnIndexAfterMove < 0;
   }
   
+  export function isWinner(playerIndex: number): boolean {
+      if (!gameIsOver()) {
+        return false;
+      }
+      if (playerIndex == 0) {
+          return player1Score == player2Score;
+      }
+      if (playerIndex == 1) {
+          return player1Score > player2Score;
+      }
+      if (playerIndex == 2) {
+          return player1Score < player2Score;
+      }
+      return false;
+  }
+  
   export function cardClicked(cardIndex: number) {
       if (state && state.bunches.length % 2 == 1) {
         let lastBunchIndex = state.bunches.length-1;
@@ -146,15 +163,23 @@ module game {
       return move.turnIndexAfterMove == playerIndex;
   }
   
+  export function startClicked(): void {
+      if (gameIsOver()) {
+          return;
+      }
+      roundStarted = true;
+      timer = $interval(function () {
+                seconds++;
+       }, 1000);
+  }
+  
   function resetBoard(scores: number[]) {
        $interval.cancel(timer);
+       roundStarted = false;
        cards = [];
        seconds = 0;
        player1Score = scores[0];
-       player2Score = scores[1];
-       timer = $interval(function () {
-                seconds++;
-       }, 1000);
+       player2Score = scores[1];    
   }
 
   export function passMove (): void {

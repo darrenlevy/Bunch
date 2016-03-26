@@ -46,11 +46,11 @@ body{
   }
   
   .menu {
-      font-size: 12px;
+      font-size: 20px;
   }
 }
 
-@media (max-width: 500px) {
+@media (max-width: 600px) {
   .card {
       font-size: 10px;
   }
