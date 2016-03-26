@@ -90,9 +90,9 @@ module gameLogic {
    * Returns 0 or more points if cards represent valid move, -1 otherwise
    */
   export function pointsForMove(cards: string[][], seconds: number) : number {
-      let points = 10 - seconds > 0 ? 10 - seconds : 0;
+      let points = 30 - seconds > 0 ? 30 - seconds : 0;
       if (cards.length === 0) {
-          return 10 - seconds > 4 ? 4 : 10 - seconds > 0 ? 10 - seconds : 0;
+          return 30 - seconds > 10 ? 10 : 30 - seconds > 0 ? 30 - seconds : 0;
       } else if (cards.length !== NUMBER_OF_TYPES) {
           return -1;
       } 
@@ -104,7 +104,7 @@ module gameLogic {
                 symbols.push(symbol);
             }
           }
-          points += symbols.length;
+          points += symbols.length * 3;
           if (symbols.length !== 1 && symbols.length !== NUMBER_OF_TYPES) {
               return -1;
           }

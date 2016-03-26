@@ -77,19 +77,26 @@
   <div id="gameArea">
     <div class="row">
         <div class="column menu" style="left:1%;">
-            <div id="e2e_test_seconds" class="seconds-left">Bonus Points: {{10 - game.seconds > 0 ? 10 - game.seconds : 0}}</div>
             <div id="e2e_test_player_1_score" class="score" ng-class="{currentPlayer: game.isCurrentPlayerIndex(0)}">Player 1 Score: {{game.player1Score}}</div>
             <div id="e2e_test_player_2_score" class="score" ng-class="{currentPlayer: game.isCurrentPlayerIndex(1)}">Player 2 Score: {{game.player2Score}}</div>
         </div>
-        <div id="e2e_test_pass_move" class="column menu pass-move" style="left:33%;" ng-click="game.passMove()">
-            I cannot find a Bunch
+        <div class="column menu" style="left:33%;">
+            <div id="e2e_test_pass_move" class="pass-text" ng-click="game.passMove()" ng-class="{hideArea: !game.roundStarted || game.gameIsOver()}">I cannot find a Bunch</div>
+            <div id="e2e_test_start" class="start-text" ng-click="game.startClicked()" ng-class="{hideArea: game.roundStarted || game.gameIsOver() || !game.isCurrentPlayerIndex(0)}">Start: Player 1</div>
+            <div id="e2e_test_start" class="start-text" ng-click="game.startClicked()" ng-class="{hideArea: game.roundStarted || game.gameIsOver() || !game.isCurrentPlayerIndex(1)}">Start: Player 2</div>
+            <div id="e2e_test_player_1_wins" class="winner-text" ng-class="{hideArea: !game.isWinner(1)}">Player 1 wins!</div>
+            <div id="e2e_test_player_2_wins" class="winner-text" ng-class="{hideArea: !game.isWinner(2)}">Player 2 wins!</div>
+            <div id="e2e_test_player_2_wins" class="winner-text" ng-class="{hideArea: !game.isWinner(0)}">Tie</div>
         </div>
         <div class="column menu" style="left:66%;" ng-if="game.gameIsOver()">
               <div id="e2e_test_round_1_cards" class="cards-played" ng-click="game.resultRoundClicked(1)">Round 1</div>
               <div id="e2e_test_round_2_cards" class="cards-played" ng-click="game.resultRoundClicked(2)">Round 2</div>
-        </div>       
+        </div>   
+       <div class="column menu" style="left:66%;" ng-if="!game.gameIsOver()">
+              <div id="e2e_test_seconds" class="seconds-left">Bonus Points: {{30 - game.seconds > 0 ? 30 - game.seconds : 0}}</div>
+        </div>     
     </div>
-    <div ng-repeat="row in [0, 1, 2, 3]" class="row" style="top:{{row * 20 + 20}}%" ng-class="{hideArea: game.showResults}">
+    <div ng-repeat="row in [0, 1, 2, 3]" class="row" style="top:{{row * 20 + 20}}%" ng-class="{hideArea: game.showResults || !game.roundStarted}">
         <div ng-repeat="col in [0, 1, 2, 3]" class="column card" style="left:{{col * 25}}%;"
             ng-class="{
                 green: game.isGreen(row * 4 + col),
@@ -99,14 +106,15 @@
                 dotted: game.isDotted(row * 4 + col),
                 double: game.isDouble(row * 4 + col),
                 selected: game.cards.indexOf(row * 4 + col) != -1,
-                flipped: game.shouldFlip(row * 4 + col)
+                flipped: game.shouldFlip(row * 4 + col),
+                shake: game.shouldShakeCard(row * 4 + col)
                 }"
             ng-click="game.cardClicked(row * 4 + col)"
             id="{{'e2e_test_div_' + row * 4 + col}}">
-          <div class='emoji' ng-class="{flipped: game.shouldFlip(row * 4 + col)}">{{game.getEmoji(row * 4 + col)}}</div>
+          <div class='emoji' ng-class="{bounce: game.shouldBounceEmoji(row * 4 + col), flipped: game.shouldFlip(row * 4 + col)}">{{game.getEmoji(row * 4 + col)}}</div>
         </div>
     </div>
-    
+
      <div ng-repeat="row in [0, 1]" class="row" style="top:{{row * 20 + 20}}%" ng-class="{hideArea: !game.showResults}">
         <div class="column card" >Player {{row+1}}:</div>
         <div ng-repeat="col in [0, 1, 2]" class="column card" style="left:{{col * 25 + 25}}%;"

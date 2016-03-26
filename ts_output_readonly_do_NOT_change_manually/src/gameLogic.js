@@ -71,9 +71,9 @@ var gameLogic;
      * Returns 0 or more points if cards represent valid move, -1 otherwise
      */
     function pointsForMove(cards, seconds) {
-        var points = 10 - seconds > 0 ? 10 - seconds : 0;
+        var points = 30 - seconds > 0 ? 30 - seconds : 0;
         if (cards.length === 0) {
-            return 10 - seconds > 4 ? 4 : 10 - seconds > 0 ? 10 - seconds : 0;
+            return 30 - seconds > 10 ? 10 : 30 - seconds > 0 ? 30 - seconds : 0;
         }
         else if (cards.length !== gameLogic.NUMBER_OF_TYPES) {
             return -1;
@@ -86,7 +86,7 @@ var gameLogic;
                     symbols.push(symbol);
                 }
             }
-            points += symbols.length;
+            points += symbols.length * 3;
             if (symbols.length !== 1 && symbols.length !== gameLogic.NUMBER_OF_TYPES) {
                 return -1;
             }

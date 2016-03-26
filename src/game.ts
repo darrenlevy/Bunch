@@ -168,6 +168,7 @@ module game {
           return;
       }
       roundStarted = true;
+      cardsPlayed = [];
       timer = $interval(function () {
                 seconds++;
        }, 1000);

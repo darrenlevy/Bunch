@@ -157,6 +157,7 @@ var game;
             return;
         }
         game.roundStarted = true;
+        game.cardsPlayed = [];
         timer = $interval(function () {
             game.seconds++;
         }, 1000);

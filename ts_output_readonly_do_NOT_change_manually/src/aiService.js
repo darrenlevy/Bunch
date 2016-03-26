@@ -12,7 +12,7 @@ var aiService;
      * Returns an empty array if the game is over.
      */
     function getPossibleMoves(state, turnIndexBeforeMove) {
-        var seconds = 10;
+        var seconds = 30;
         var possibleMoves = [];
         for (var i = 0; i < gameLogic.DECK_SIZE; i++) {
             for (var j = i + 1; j < gameLogic.DECK_SIZE; j++) {

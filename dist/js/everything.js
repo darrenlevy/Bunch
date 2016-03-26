@@ -71,9 +71,9 @@ var gameLogic;
      * Returns 0 or more points if cards represent valid move, -1 otherwise
      */
     function pointsForMove(cards, seconds) {
-        var points = 10 - seconds > 0 ? 10 - seconds : 0;
+        var points = 30 - seconds > 0 ? 30 - seconds : 0;
         if (cards.length === 0) {
-            return points;
+            return 30 - seconds > 10 ? 10 : 30 - seconds > 0 ? 30 - seconds : 0;
         }
         else if (cards.length !== gameLogic.NUMBER_OF_TYPES) {
             return -1;
@@ -86,7 +86,7 @@ var gameLogic;
                     symbols.push(symbol);
                 }
             }
-            points += symbols.length;
+            points += symbols.length * 3;
             if (symbols.length !== 1 && symbols.length !== gameLogic.NUMBER_OF_TYPES) {
                 return -1;
             }
@@ -180,11 +180,13 @@ var game;
     game.state = null;
     game.isHelpModalShown = false;
     game.cards = [];
+    game.cardsPlayed = [];
     game.seconds = 0;
     game.player1Score = 0;
     game.player2Score = 0;
     game.deckIndex = 0;
     game.resultRound = 1;
+    game.roundStarted = false;
     var timer;
     game.showResults = false;
     function init() {
@@ -275,6 +277,22 @@ var game;
         return game.move.turnIndexAfterMove < 0;
     }
     game.gameIsOver = gameIsOver;
+    function isWinner(playerIndex) {
+        if (!gameIsOver()) {
+            return false;
+        }
+        if (playerIndex == 0) {
+            return game.player1Score == game.player2Score;
+        }
+        if (playerIndex == 1) {
+            return game.player1Score > game.player2Score;
+        }
+        if (playerIndex == 2) {
+            return game.player1Score < game.player2Score;
+        }
+        return false;
+    }
+    game.isWinner = isWinner;
     function cardClicked(cardIndex) {
         if (game.state && game.state.bunches.length % 2 == 1) {
             var lastBunchIndex = game.state.bunches.length - 1;
@@ -291,7 +309,11 @@ var game;
             game.cards.splice(index, 1);
         }
         if (game.cards.length >= 3) {
+            game.cardsPlayed = game.cards;
             submitMove();
+        }
+        else {
+            game.cardsPlayed = [];
         }
     }
     game.cardClicked = cardClicked;
@@ -299,15 +321,24 @@ var game;
         return game.move.turnIndexAfterMove == playerIndex;
     }
     game.isCurrentPlayerIndex = isCurrentPlayerIndex;
+    function startClicked() {
+        if (gameIsOver()) {
+            return;
+        }
+        game.roundStarted = true;
+        game.cardsPlayed = [];
+        timer = $interval(function () {
+            game.seconds++;
+        }, 1000);
+    }
+    game.startClicked = startClicked;
     function resetBoard(scores) {
         $interval.cancel(timer);
+        game.roundStarted = false;
         game.cards = [];
         game.seconds = 0;
         game.player1Score = scores[0];
         game.player2Score = scores[1];
-        timer = $interval(function () {
-            game.seconds++;
-        }, 1000);
     }
     function passMove() {
         game.cards = [];
@@ -337,7 +368,7 @@ var game;
         var emoji = "";
         var count = parseInt(game.state.decks[game.deckIndex][index][1]);
         for (var i = 0; i < count; i++) {
-            emoji += game.state.decks[game.deckIndex][index][0];
+            emoji += game.state.decks[game.deckIndex][index][0] + " ";
         }
         return emoji;
     }
@@ -380,6 +411,48 @@ var game;
         return false;
     }
     game.shouldFlip = shouldFlip;
+    function shouldShakeCard(index) {
+        if (game.cardsPlayed.indexOf(index) !== -1) {
+            var borders = [];
+            for (var i = 0; i < 3; i++) {
+                var cardPlayed = game.cardsPlayed[i];
+                var border = game.state.decks[game.state.round - 1][cardPlayed][3];
+                if (borders.indexOf(border) === -1) {
+                    borders.push(border);
+                }
+            }
+            return borders.length !== 1 && borders.length !== 3;
+        }
+        return false;
+    }
+    game.shouldShakeCard = shouldShakeCard;
+    function shouldBounceEmoji(index) {
+        if (game.cardsPlayed.indexOf(index) !== -1) {
+            var emojis = [];
+            var counts = [];
+            var colors = [];
+            for (var i = 0; i < 3; i++) {
+                var cardPlayed = game.cardsPlayed[i];
+                var emoji = game.state.decks[game.state.round - 1][cardPlayed][0];
+                var count = game.state.decks[game.state.round - 1][cardPlayed][1];
+                var color = game.state.decks[game.state.round - 1][cardPlayed][2];
+                if (emojis.indexOf(emoji) === -1) {
+                    emojis.push(emoji);
+                }
+                if (counts.indexOf(count) === -1) {
+                    counts.push(count);
+                }
+                if (colors.indexOf(color) === -1) {
+                    colors.push(color);
+                }
+            }
+            return (emojis.length !== 1 && emojis.length !== 3) ||
+                (counts.length !== 1 && counts.length !== 3) ||
+                (colors.length !== 1 && colors.length !== 3);
+        }
+        return false;
+    }
+    game.shouldBounceEmoji = shouldBounceEmoji;
     function resultRoundClicked(round) {
         if (game.resultRound == round) {
             game.showResults = !game.showResults;
@@ -543,7 +616,7 @@ var aiService;
      * Returns an empty array if the game is over.
      */
     function getPossibleMoves(state, turnIndexBeforeMove) {
-        var seconds = 10;
+        var seconds = 30;
         var possibleMoves = [];
         for (var i = 0; i < gameLogic.DECK_SIZE; i++) {
             for (var j = i + 1; j < gameLogic.DECK_SIZE; j++) {

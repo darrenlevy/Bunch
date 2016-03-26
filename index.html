@@ -116,7 +116,7 @@
               <div id="e2e_test_round_2_cards" class="cards-played" ng-click="game.resultRoundClicked(2)">Round 2</div>
         </div>   
        <div class="column menu" style="left:66%;" ng-if="!game.gameIsOver()">
-              <div id="e2e_test_seconds" class="seconds-left">Bonus Points: {{10 - game.seconds > 0 ? 10 - game.seconds : 0}}</div>
+              <div id="e2e_test_seconds" class="seconds-left">Bonus Points: {{30 - game.seconds > 0 ? 30 - game.seconds : 0}}</div>
         </div>     
     </div>
     <div ng-repeat="row in [0, 1, 2, 3]" class="row" style="top:{{row * 20 + 20}}%" ng-class="{hideArea: game.showResults || !game.roundStarted}">

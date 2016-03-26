@@ -11,7 +11,7 @@ module aiService {
    * Returns an empty array if the game is over.
    */
   export function getPossibleMoves(state: IState, turnIndexBeforeMove: number): IMove[] {
-    let seconds = 10;
+    let seconds = 30;
     let possibleMoves: IMove[] = [];
     for (let i = 0; i < gameLogic.DECK_SIZE; i++) {
       for (let j = i+1; j < gameLogic.DECK_SIZE; j++) {

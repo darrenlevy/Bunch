@@ -18,13 +18,13 @@ describe("In Bunches", function() {
   let FIRST_ROUND = 1;
   let LAST_ROUND = 2;
   let NO_SCORE = [0, 0];
-  let NO_MOVE_SCORE = [5, 0];
-  let FIRST_SCORE = [11, 0];
-  let FIRST_ROUND_SCORE = [11, 11];
-  let BEFORE_LAST_SCORE = [20, 19];
-  let LAST_ROUND_SCORE = [20, 19];
-  let LAST_ROUND_SCORE_PLAYER_2_WINS = [20, 35];
-  let LAST_ROUND_SCORE_TIE = [20, 20];
+  let NO_MOVE_SCORE = [10, 0];
+  let FIRST_SCORE = [43, 0];
+  let FIRST_ROUND_SCORE = [43, 43];
+  let BEFORE_LAST_SCORE = [53, 43];
+  let LAST_ROUND_SCORE = [53, 48];
+  let LAST_ROUND_SCORE_PLAYER_2_WINS = [53, 101];
+  let LAST_ROUND_SCORE_TIE = [53, 53];
   let NO_DECK : string[][] = null;
   let DECK = [
       [':|', '1', 'red', 'solid'],
@@ -166,17 +166,17 @@ describe("In Bunches", function() {
   });
   
   it("player 2 makes a valid move to end game and lose is OK", function() {
-    expectMove(OK, PLAYER_2_TURN, DECKS, VALID_MOVE, NO_MOVE, SECONDS + 5,
+    expectMove(OK, PLAYER_2_TURN, DECKS, VALID_MOVE, NO_MOVE, SECONDS + 20,
       LAST_ROUND, LAST_ROUND + 1, BEFORE_LAST_SCORE, LAST_ROUND_SCORE, NO_ONE_TURN, PLAYER_1_WINS); 
   });
   
   it("player 2 makes a valid move to end game and win is OK", function() {
-    expectMove(OK, PLAYER_2_TURN, DECKS, VALID_MOVE, VALID_MOVE, SECONDS - 5,
+    expectMove(OK, PLAYER_2_TURN, DECKS, VALID_MOVE, VALID_MOVE, SECONDS - 15,
       LAST_ROUND, LAST_ROUND + 1, BEFORE_LAST_SCORE, LAST_ROUND_SCORE_PLAYER_2_WINS, NO_ONE_TURN, PLAYER_2_WINS); 
   });
   
   it("player 2 makes a valid move to end game and ties OK", function() {
-    expectMove(OK, PLAYER_2_TURN, DECKS, VALID_MOVE, NO_MOVE, SECONDS+4,
+    expectMove(OK, PLAYER_2_TURN, DECKS, VALID_MOVE, NO_MOVE, SECONDS,
       LAST_ROUND, LAST_ROUND + 1, BEFORE_LAST_SCORE, LAST_ROUND_SCORE_TIE, NO_ONE_TURN, TIE_SCORE); 
   });
 

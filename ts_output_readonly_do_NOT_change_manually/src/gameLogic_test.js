@@ -18,13 +18,13 @@ describe("In Bunches", function () {
     var FIRST_ROUND = 1;
     var LAST_ROUND = 2;
     var NO_SCORE = [0, 0];
-    var NO_MOVE_SCORE = [5, 0];
-    var FIRST_SCORE = [11, 0];
-    var FIRST_ROUND_SCORE = [11, 11];
-    var BEFORE_LAST_SCORE = [20, 19];
-    var LAST_ROUND_SCORE = [20, 19];
-    var LAST_ROUND_SCORE_PLAYER_2_WINS = [20, 35];
-    var LAST_ROUND_SCORE_TIE = [20, 20];
+    var NO_MOVE_SCORE = [10, 0];
+    var FIRST_SCORE = [43, 0];
+    var FIRST_ROUND_SCORE = [43, 43];
+    var BEFORE_LAST_SCORE = [53, 43];
+    var LAST_ROUND_SCORE = [53, 48];
+    var LAST_ROUND_SCORE_PLAYER_2_WINS = [53, 101];
+    var LAST_ROUND_SCORE_TIE = [53, 53];
     var NO_DECK = null;
     var DECK = [
         [':|', '1', 'red', 'solid'],
@@ -130,13 +130,13 @@ describe("In Bunches", function () {
         expectMove(ILLEGAL, PLAYER_2_TURN, DECKS, VALID_MOVE, VALID_MOVE, SECONDS, FIRST_ROUND, FIRST_ROUND, FIRST_SCORE, FIRST_ROUND_SCORE, PLAYER_2_TURN, NO_ONE_WINS);
     });
     it("player 2 makes a valid move to end game and lose is OK", function () {
-        expectMove(OK, PLAYER_2_TURN, DECKS, VALID_MOVE, NO_MOVE, SECONDS + 5, LAST_ROUND, LAST_ROUND + 1, BEFORE_LAST_SCORE, LAST_ROUND_SCORE, NO_ONE_TURN, PLAYER_1_WINS);
+        expectMove(OK, PLAYER_2_TURN, DECKS, VALID_MOVE, NO_MOVE, SECONDS + 20, LAST_ROUND, LAST_ROUND + 1, BEFORE_LAST_SCORE, LAST_ROUND_SCORE, NO_ONE_TURN, PLAYER_1_WINS);
     });
     it("player 2 makes a valid move to end game and win is OK", function () {
-        expectMove(OK, PLAYER_2_TURN, DECKS, VALID_MOVE, VALID_MOVE, SECONDS - 5, LAST_ROUND, LAST_ROUND + 1, BEFORE_LAST_SCORE, LAST_ROUND_SCORE_PLAYER_2_WINS, NO_ONE_TURN, PLAYER_2_WINS);
+        expectMove(OK, PLAYER_2_TURN, DECKS, VALID_MOVE, VALID_MOVE, SECONDS - 15, LAST_ROUND, LAST_ROUND + 1, BEFORE_LAST_SCORE, LAST_ROUND_SCORE_PLAYER_2_WINS, NO_ONE_TURN, PLAYER_2_WINS);
     });
     it("player 2 makes a valid move to end game and ties OK", function () {
-        expectMove(OK, PLAYER_2_TURN, DECKS, VALID_MOVE, NO_MOVE, SECONDS + 4, LAST_ROUND, LAST_ROUND + 1, BEFORE_LAST_SCORE, LAST_ROUND_SCORE_TIE, NO_ONE_TURN, TIE_SCORE);
+        expectMove(OK, PLAYER_2_TURN, DECKS, VALID_MOVE, NO_MOVE, SECONDS, LAST_ROUND, LAST_ROUND + 1, BEFORE_LAST_SCORE, LAST_ROUND_SCORE_TIE, NO_ONE_TURN, TIE_SCORE);
     });
     it("player 2 makes a move after the game is over is illegal", function () {
         expectMove(ILLEGAL, PLAYER_2_TURN, DECKS, NO_PREVIOUS_MOVE, VALID_MOVE, SECONDS, LAST_ROUND + 1, LAST_ROUND + 1, LAST_ROUND_SCORE, LAST_ROUND_SCORE, PLAYER_1_TURN, NO_ONE_WINS);
