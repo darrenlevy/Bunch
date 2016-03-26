@@ -11,6 +11,7 @@ var game;
     game.state = null;
     game.isHelpModalShown = false;
     game.cards = [];
+    game.cardsPlayed = [];
     game.seconds = 0;
     game.player1Score = 0;
     game.player2Score = 0;
@@ -122,7 +123,11 @@ var game;
             game.cards.splice(index, 1);
         }
         if (game.cards.length >= 3) {
+            game.cardsPlayed = game.cards;
             submitMove();
+        }
+        else {
+            game.cardsPlayed = [];
         }
     }
     game.cardClicked = cardClicked;
@@ -211,6 +216,48 @@ var game;
         return false;
     }
     game.shouldFlip = shouldFlip;
+    function shouldShakeCard(index) {
+        if (game.cardsPlayed.indexOf(index) !== -1) {
+            var borders = [];
+            for (var i = 0; i < 3; i++) {
+                var cardPlayed = game.cardsPlayed[i];
+                var border = game.state.decks[game.state.round - 1][cardPlayed][3];
+                if (borders.indexOf(border) === -1) {
+                    borders.push(border);
+                }
+            }
+            return borders.length !== 1 && borders.length !== 3;
+        }
+        return false;
+    }
+    game.shouldShakeCard = shouldShakeCard;
+    function shouldBounceEmoji(index) {
+        if (game.cardsPlayed.indexOf(index) !== -1) {
+            var emojis = [];
+            var counts = [];
+            var colors = [];
+            for (var i = 0; i < 3; i++) {
+                var cardPlayed = game.cardsPlayed[i];
+                var emoji = game.state.decks[game.state.round - 1][cardPlayed][0];
+                var count = game.state.decks[game.state.round - 1][cardPlayed][1];
+                var color = game.state.decks[game.state.round - 1][cardPlayed][2];
+                if (emojis.indexOf(emoji) === -1) {
+                    emojis.push(emoji);
+                }
+                if (counts.indexOf(count) === -1) {
+                    counts.push(count);
+                }
+                if (colors.indexOf(color) === -1) {
+                    colors.push(color);
+                }
+            }
+            return (emojis.length !== 1 && emojis.length !== 3) ||
+                (counts.length !== 1 && counts.length !== 3) ||
+                (colors.length !== 1 && colors.length !== 3);
+        }
+        return false;
+    }
+    game.shouldBounceEmoji = shouldBounceEmoji;
     function resultRoundClicked(round) {
         if (game.resultRound == round) {
             game.showResults = !game.showResults;

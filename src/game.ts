@@ -14,6 +14,7 @@ module game {
   export let state: IState = null;
   export let isHelpModalShown: boolean = false;
   export let cards: number[] = [];
+  export let cardsPlayed: number[] = [];
   export let seconds: number = 0;
   export let player1Score: number = 0;
   export let player2Score: number = 0;
@@ -134,7 +135,10 @@ module game {
           cards.splice(index, 1);
       }
       if (cards.length >= 3) {
+          cardsPlayed = cards;
           submitMove();
+      } else {
+         cardsPlayed = [];
       }
   }
   
@@ -221,8 +225,50 @@ module game {
             }
             return true;
         } 
-    }
-      
+    } 
+    return false;
+  }
+  
+  export function shouldShakeCard(index: number): boolean {
+    if (cardsPlayed.indexOf(index) !== -1) {
+       let borders : string[] = [];
+       for (let i = 0; i < 3; i++) {
+           let cardPlayed = cardsPlayed[i];
+           let border = state.decks[state.round-1][cardPlayed][3];
+           if (borders.indexOf(border) === -1) {
+               borders.push(border);
+           }
+       }
+       return borders.length !== 1 && borders.length !== 3;
+    } 
+    return false;
+  }
+  
+  export function shouldBounceEmoji(index: number): boolean {
+    if (cardsPlayed.indexOf(index) !== -1) {
+       let emojis : string[] = [];
+       let counts : string[] = [];
+       let colors : string[] = [];
+       for (let i = 0; i < 3; i++) {
+           let cardPlayed = cardsPlayed[i];
+           let emoji = state.decks[state.round-1][cardPlayed][0];
+           let count = state.decks[state.round-1][cardPlayed][1];
+           let color = state.decks[state.round-1][cardPlayed][2];
+
+           if (emojis.indexOf(emoji) === -1) {
+               emojis.push(emoji);
+           }
+           if (counts.indexOf(count) === -1) {
+               counts.push(count);
+           }
+           if (colors.indexOf(color) === -1) {
+               colors.push(color);
+           }
+       }
+       return (emojis.length !== 1 && emojis.length !== 3) ||
+                (counts.length !== 1 && counts.length !== 3) ||
+                    (colors.length !== 1 && colors.length !== 3);
+    } 
     return false;
   }
   

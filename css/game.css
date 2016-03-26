@@ -97,6 +97,61 @@ body{
   to {opacity: 1;}
 }
 
+.bounce {
+    animation: bounce 1s linear;
+}
+
+@keyframes bounce {
+    0%{-webkit-transform:none;transform:none;}
+    10%{
+        -webkit-transform:translateY(15%);
+        transform:translateY(15%);
+    }
+    25%{
+        -webkit-transform:translateY(-12%);
+        transform:translateY(-12%);
+    }
+    45%{
+        -webkit-transform:translateY(10%);
+        transform:translateY(10%);
+    }
+    70%{
+        -webkit-transform:translateY(-8%);
+        transform:translateY(-8%);
+    }
+    95%{
+        -webkit-transform:translateY(5%);
+        transform:translateY(5%);
+    }
+    100%{-webkit-transform:none;transform:none;}
+}
+
+.shake {
+    animation: shake 1s linear;
+}
+
+@keyframes shake {
+    0%{-webkit-transform:none;transform:none;}
+    20%{
+        -webkit-transform:rotate(5deg);
+        transform:rotate(5deg);
+    }
+    40%{
+        -webkit-transform:rotate(-5deg);
+        transform:rotate(-5deg);
+    }
+    60%{
+        -webkit-transform:rotate(5deg);
+        transform:rotate(5deg);
+    }
+    80%{
+        -webkit-transform:rotate(-5deg);
+        transform:rotate(-5deg);
+    }
+
+    100%{-webkit-transform:none;transform:none;}
+}
+
 td {
   padding:0 5px 0 5px;
 }
