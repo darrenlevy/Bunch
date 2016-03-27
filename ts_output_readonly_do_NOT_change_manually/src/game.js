@@ -86,6 +86,9 @@ var game;
         game.state = game.move.stateAfterMove;
         if (!game.state) {
             game.state = gameLogic.getInitialState();
+            game.move.endMatchScores = [0, 0];
+            game.move.turnIndexAfterMove = 0;
+            game.move.stateAfterMove = game.state;
         }
         resetBoard(game.state.scores);
         game.canMakeMove = game.move.turnIndexAfterMove >= 0 &&
@@ -153,7 +156,7 @@ var game;
     }
     game.isCurrentPlayerIndex = isCurrentPlayerIndex;
     function startClicked() {
-        if (gameIsOver()) {
+        if (gameIsOver() || !game.canMakeMove) {
             return;
         }
         game.roundStarted = true;
@@ -172,8 +175,10 @@ var game;
         game.player2Score = scores[1];
     }
     function passMove() {
-        game.cards = [];
-        submitMove();
+        if (game.canMakeMove) {
+            game.cards = [];
+            submitMove();
+        }
     }
     game.passMove = passMove;
     function submitMove() {

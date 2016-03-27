@@ -95,6 +95,9 @@ module game {
     state = move.stateAfterMove;
     if (!state) {
       state = gameLogic.getInitialState();
+      move.endMatchScores = [0,0];
+      move.turnIndexAfterMove = 0;
+      move.stateAfterMove = state;
     }
     resetBoard(state.scores);
     
@@ -107,7 +110,6 @@ module game {
     // Is it the computer's turn?
     isComputerTurn = canMakeMove &&
         params.playersInfo[params.yourPlayerIndex].playerId === '';
-
     if (isComputerTurn) {
       // To make sure the player won't click something and send a move instead of the computer sending a move.
       canMakeMove = false;
@@ -164,7 +166,7 @@ module game {
   }
   
   export function startClicked(): void {
-      if (gameIsOver()) {
+      if (gameIsOver() || !canMakeMove) {
           return;
       }
       roundStarted = true;
@@ -184,8 +186,10 @@ module game {
   }
 
   export function passMove (): void {
-      cards = [];
-      submitMove();
+      if (canMakeMove) {
+        cards = [];
+        submitMove();
+      }
   }
 
   export function submitMove (): void {
