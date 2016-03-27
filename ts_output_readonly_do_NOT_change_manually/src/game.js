@@ -7,7 +7,7 @@ var game;
     game.animationEnded = false;
     game.canMakeMove = false;
     game.isComputerTurn = false;
-    game.move = null;
+    game.move = null; //prior move
     game.state = null;
     game.isHelpModalShown = false;
     game.cards = [];
@@ -242,6 +242,41 @@ var game;
         return false;
     }
     game.shouldFlip = shouldFlip;
+    function shouldHintCardIndex(index) {
+        if (gameIsOver()) {
+            return false;
+        }
+        if (game.seconds < 20) {
+            return false;
+        }
+        var deck = game.state.decks[game.state.round - 1];
+        var possibleMoves = aiService.getPossibleMoves(game.state, game.move.turnIndexAfterMove);
+        var validMoveExists = false;
+        for (var i = 0; i < possibleMoves.length; i++) {
+            var possibleMove = possibleMoves[i];
+            var bunches = possibleMove.stateAfterMove.bunches;
+            var lastBunch = bunches[bunches.length - 1];
+            var alreadyPlayed = false;
+            for (var y = 0; y < lastBunch.cardIndices.length; y++) {
+                alreadyPlayed = shouldFlip(lastBunch.cardIndices[y]);
+                if (alreadyPlayed) {
+                    break;
+                }
+            }
+            if (alreadyPlayed) {
+                continue;
+            }
+            validMoveExists = true;
+            if (game.seconds == 20) {
+                return lastBunch.cardIndices[0] == index;
+            }
+            else if (game.seconds == 30) {
+                return lastBunch.cardIndices[1] == index;
+            }
+        }
+        return -1 == index && game.seconds > 30 && !validMoveExists;
+    }
+    game.shouldHintCardIndex = shouldHintCardIndex;
     function shouldShakeCard(index) {
         if (game.cardsPlayed.indexOf(index) !== -1) {
             var borders = [];

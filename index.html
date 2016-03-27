@@ -103,7 +103,7 @@
             <div id="e2e_test_player_1_score" class="score" ng-class="{currentPlayer: game.isCurrentPlayerIndex(0)}">Player 1 Score: {{game.player1Score}}</div>
             <div id="e2e_test_player_2_score" class="score" ng-class="{currentPlayer: game.isCurrentPlayerIndex(1)}">Player 2 Score: {{game.player2Score}}</div>
         </div>
-        <div class="column menu" style="left:33%;">
+        <div class="column menu" style="left:33%;" ng-class="{grow: game.shouldHintCardIndex(-1)}">
             <div id="e2e_test_pass_move" class="pass-text" ng-click="game.passMove()" ng-class="{hideArea: !game.roundStarted || game.gameIsOver()}">I cannot find a Bunch</div>
             <div id="e2e_test_start" class="start-text" ng-click="game.startClicked()" ng-class="{hideArea: game.roundStarted || game.gameIsOver() || !game.isCurrentPlayerIndex(0)}">Start: Player 1</div>
             <div id="e2e_test_start" class="start-text" ng-click="game.startClicked()" ng-class="{hideArea: game.roundStarted || game.gameIsOver() || !game.isCurrentPlayerIndex(1)}">Start: Player 2</div>
@@ -122,6 +122,7 @@
     <div ng-repeat="row in [0, 1, 2, 3]" class="row" style="top:{{row * 20 + 20}}%" ng-class="{hideArea: game.showResults || !game.roundStarted}">
         <div ng-repeat="col in [0, 1, 2, 3]" class="column card" style="left:{{col * 25}}%;"
             ng-class="{
+                grow: game.shouldHintCardIndex(row * 4 + col),
                 green: game.isGreen(row * 4 + col),
                 pink: game.isPink(row * 4 + col),
                 orange: game.isOrange(row * 4 + col),

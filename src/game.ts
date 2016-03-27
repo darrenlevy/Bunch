@@ -10,7 +10,7 @@ module game {
   export let animationEnded = false;
   export let canMakeMove = false;
   export let isComputerTurn = false;
-  export let move: IMove = null;
+  export let move: IMove = null; //prior move
   export let state: IState = null;
   export let isHelpModalShown: boolean = false;
   export let cards: number[] = [];
@@ -254,6 +254,41 @@ module game {
     } 
     return false;
   }
+  
+  export function shouldHintCardIndex(index: number): boolean {
+      if (gameIsOver()) {
+          return false;
+      }
+      if (seconds < 20) {
+          return false;
+      }
+      let deck = state.decks[state.round-1]
+      let possibleMoves = aiService.getPossibleMoves(state, move.turnIndexAfterMove)
+      let validMoveExists = false;
+      for (let i = 0; i < possibleMoves.length; i++) {
+          let possibleMove = possibleMoves[i];
+          let bunches = possibleMove.stateAfterMove.bunches;
+          let lastBunch = bunches[bunches.length-1];
+          let alreadyPlayed = false;
+          for (let y = 0; y < lastBunch.cardIndices.length; y++) {
+              alreadyPlayed = shouldFlip(lastBunch.cardIndices[y]);
+              if (alreadyPlayed) {
+                  break;
+              }
+          }
+          if (alreadyPlayed) {
+              continue;
+          }
+          validMoveExists = true
+          if (seconds == 20) {
+            return lastBunch.cardIndices[0] == index;
+          } else if (seconds == 30) {
+              return lastBunch.cardIndices[1] == index
+          }
+      }
+      return -1 == index && seconds > 30 && !validMoveExists;
+  }
+  
   
   export function shouldShakeCard(index: number): boolean {
     if (cardsPlayed.indexOf(index) !== -1) {
