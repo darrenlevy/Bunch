@@ -76,7 +76,6 @@ module game {
     $rootScope.$apply(function () {
       log.info("Animation ended");
       animationEnded = true;
-      //sendComputerMove();
     });
   }
 
@@ -102,10 +101,10 @@ module game {
     resetBoard(state.scores);
     
     canMakeMove = move.turnIndexAfterMove >= 0 && // game is ongoing
-      params.yourPlayerIndex === move.turnIndexAfterMove; // it's my turn
+        params.yourPlayerIndex === move.turnIndexAfterMove; // it's my turn
     deckIndex = canMakeMove ? state.round - 1 : deckIndex;
     if (move.turnIndexAfterMove < 0) {
-        $interval.cancel(timer);
+      $interval.cancel(timer);
     }
     // Is it the computer's turn?
     isComputerTurn = canMakeMove &&
@@ -113,83 +112,81 @@ module game {
     if (isComputerTurn) {
       // To make sure the player won't click something and send a move instead of the computer sending a move.
       canMakeMove = false;
-      //if (!state.bunches) {
-        sendComputerMove();
-      //}
+      sendComputerMove();
     }
   }
   
   export function gameIsOver(): boolean {
-      return move.turnIndexAfterMove < 0;
+    return move.turnIndexAfterMove < 0;
   }
   
   export function isWinner(playerIndex: number): boolean {
-      if (!gameIsOver()) {
-        return false;
-      }
-      if (playerIndex == 0) {
-          return player1Score == player2Score;
-      }
-      if (playerIndex == 1) {
-          return player1Score > player2Score;
-      }
-      if (playerIndex == 2) {
-          return player1Score < player2Score;
-      }
+    if (!gameIsOver()) {
       return false;
+    }
+    if (playerIndex == 0) {
+      return player1Score == player2Score;
+    }
+    if (playerIndex == 1) {
+      return player1Score > player2Score;
+    }
+    if (playerIndex == 2) {
+      return player1Score < player2Score;
+    }
+    return false;
   }
   
   export function cardClicked(cardIndex: number) {
-      if (state && state.bunches.length % 2 == 1) {
-        let lastBunchIndex = state.bunches.length-1;
-        let lastBunch = state.bunches[lastBunchIndex];
-        if (lastBunch.seconds <= seconds && lastBunch.cardIndices.indexOf(cardIndex) !== -1) {
-            return;
-        } 
-      }
-      let index = cards.indexOf(cardIndex)
-      if (index == -1) {
-          cards.push(cardIndex);
-      } else {
-          cards.splice(index, 1);
-      }
-      if (cards.length >= 3) {
-          cardsPlayed = cards;
-          submitMove();
-      } else {
-         cardsPlayed = [];
-      }
+    if (state && state.bunches.length % 2 == 1) {
+      let lastBunchIndex = state.bunches.length-1;
+      let lastBunch = state.bunches[lastBunchIndex];
+      if (lastBunch.seconds <= seconds && lastBunch.cardIndices.indexOf(cardIndex) !== -1) {
+        return;
+      } 
+    }
+    let index = cards.indexOf(cardIndex)
+    if (index == -1) {
+        cards.push(cardIndex);
+    } else {
+        cards.splice(index, 1);
+    }
+    if (cards.length >= 3) {
+        cardsPlayed = cards;
+        submitMove();
+    } else {
+       cardsPlayed = [];
+    }
   }
   
   export function isCurrentPlayerIndex(playerIndex: number): boolean {
-      return move.turnIndexAfterMove == playerIndex;
+    return move.turnIndexAfterMove == playerIndex;
   }
   
   export function startClicked(): void {
-      if (gameIsOver() || !canMakeMove) {
-          return;
-      }
-      roundStarted = true;
-      cardsPlayed = [];
-      timer = $interval(function () {
-                seconds++;
-       }, 1000);
+    if (gameIsOver() || !canMakeMove) {
+        return;
+    }
+    roundStarted = true;
+    cardsPlayed = [];
+    timer = $interval(function () {
+      seconds++;
+    }, 1000);
   }
   
   function resetBoard(scores: number[]) {
-       $interval.cancel(timer);
-       roundStarted = false;
-       cards = [];
-       seconds = 0;
-       player1Score = scores[0];
-       player2Score = scores[1];    
+    $interval.cancel(timer);
+    roundStarted = false;
+    cards = [];
+    seconds = 0;
+    player1Score = scores[0];
+    player2Score = scores[1];    
   }
 
   export function passMove (): void {
-      if (canMakeMove) {
-        cards = [];
-        submitMove();
-      }
+    if (canMakeMove) {
+      cards = [];
+      submitMove();
+    }
   }
 
   export function submitMove (): void {
@@ -215,12 +212,11 @@ module game {
     let emoji = "";
     let count = parseInt(state.decks[deckIndex][index][1])
     for (let i = 0; i < count; i++) {
-        emoji += state.decks[deckIndex][index][0] + " ";
+      emoji += state.decks[deckIndex][index][0] + " ";
     }
     return emoji;
   }
  
-  
   export function isGreen(index: number): boolean {
     return state.decks[deckIndex][index][2] == "green";
   }
@@ -247,113 +243,112 @@ module game {
   
   export function shouldFlip(index: number): boolean {
     if (state && state.bunches.length % 2 == 1) {
-        let lastBunchIndex = state.bunches.length-1;
-        let lastBunch = state.bunches[lastBunchIndex];
-        if (lastBunch.seconds <= seconds && lastBunch.cardIndices.indexOf(index) !== -1) {
-            if (cards.indexOf(index) !== -1) {
-                cards.splice(cards.indexOf(index), 1);
-            }
-            return true;
-        } 
+      let lastBunchIndex = state.bunches.length-1;
+      let lastBunch = state.bunches[lastBunchIndex];
+      if (lastBunch.seconds <= seconds && lastBunch.cardIndices.indexOf(index) !== -1) {
+        if (cards.indexOf(index) !== -1) {
+          cards.splice(cards.indexOf(index), 1);
+        }
+        return true;
+      } 
     } 
     return false;
   }
   
   export function shouldHintCardIndex(index: number): boolean {
       if (gameIsOver()) {
-          return false;
+        return false;
       }
       if (seconds < 20) {
-          return false;
+        return false;
       }
       let deck = state.decks[state.round-1]
       let possibleMoves = aiService.getPossibleMoves(state, move.turnIndexAfterMove)
       let validMoveExists = false;
       for (let i = 0; i < possibleMoves.length; i++) {
-          let possibleMove = possibleMoves[i];
-          let bunches = possibleMove.stateAfterMove.bunches;
-          let lastBunch = bunches[bunches.length-1];
-          let alreadyPlayed = false;
-          for (let y = 0; y < lastBunch.cardIndices.length; y++) {
-              alreadyPlayed = shouldFlip(lastBunch.cardIndices[y]);
-              if (alreadyPlayed) {
-                  break;
-              }
-          }
+        let possibleMove = possibleMoves[i];
+        let bunches = possibleMove.stateAfterMove.bunches;
+        let lastBunch = bunches[bunches.length-1];
+        let alreadyPlayed = false;
+        for (let y = 0; y < lastBunch.cardIndices.length; y++) {
+          alreadyPlayed = shouldFlip(lastBunch.cardIndices[y]);
           if (alreadyPlayed) {
-              continue;
+            break;
           }
-          validMoveExists = true
-          if (seconds == 20) {
-            return lastBunch.cardIndices[0] == index;
-          } else if (seconds == 30) {
-              return lastBunch.cardIndices[1] == index
-          }
+        }
+        if (alreadyPlayed) {
+          continue;
+        }
+        validMoveExists = true
+        if (seconds == 20) {
+          return lastBunch.cardIndices[0] == index;
+        } else if (seconds == 30) {
+          return lastBunch.cardIndices[1] == index
+        }
       }
       return -1 == index && seconds > 30 && !validMoveExists;
   }
   
-  
   export function shouldShakeCard(index: number): boolean {
     if (cardsPlayed.indexOf(index) !== -1) {
-       let borders : string[] = [];
-       for (let i = 0; i < 3; i++) {
-           let cardPlayed = cardsPlayed[i];
-           let border = state.decks[state.round-1][cardPlayed][3];
-           if (borders.indexOf(border) === -1) {
-               borders.push(border);
-           }
-       }
-       return borders.length !== 1 && borders.length !== 3;
+      let borders : string[] = [];
+      for (let i = 0; i < 3; i++) {
+        let cardPlayed = cardsPlayed[i];
+        let border = state.decks[state.round-1][cardPlayed][3];
+        if (borders.indexOf(border) === -1) {
+          borders.push(border);
+        }
+      }
+      return borders.length !== 1 && borders.length !== 3;
     } 
     return false;
   }
   
   export function shouldBounceEmoji(index: number): boolean {
     if (cardsPlayed.indexOf(index) !== -1) {
-       let emojis : string[] = [];
-       let counts : string[] = [];
-       let colors : string[] = [];
-       for (let i = 0; i < 3; i++) {
-           let cardPlayed = cardsPlayed[i];
-           let emoji = state.decks[state.round-1][cardPlayed][0];
-           let count = state.decks[state.round-1][cardPlayed][1];
-           let color = state.decks[state.round-1][cardPlayed][2];
+      let emojis : string[] = [];
+      let counts : string[] = [];
+      let colors : string[] = [];
+      for (let i = 0; i < 3; i++) {
+        let cardPlayed = cardsPlayed[i];
+        let emoji = state.decks[state.round-1][cardPlayed][0];
+        let count = state.decks[state.round-1][cardPlayed][1];
+        let color = state.decks[state.round-1][cardPlayed][2];
 
-           if (emojis.indexOf(emoji) === -1) {
-               emojis.push(emoji);
-           }
-           if (counts.indexOf(count) === -1) {
-               counts.push(count);
-           }
-           if (colors.indexOf(color) === -1) {
-               colors.push(color);
-           }
-       }
-       return (emojis.length !== 1 && emojis.length !== 3) ||
-                (counts.length !== 1 && counts.length !== 3) ||
-                    (colors.length !== 1 && colors.length !== 3);
+        if (emojis.indexOf(emoji) === -1) {
+           emojis.push(emoji);
+        }
+        if (counts.indexOf(count) === -1) {
+           counts.push(count);
+        }
+        if (colors.indexOf(color) === -1) {
+           colors.push(color);
+        }
+      }
+      return (emojis.length !== 1 && emojis.length !== 3) ||
+          (counts.length !== 1 && counts.length !== 3) ||
+              (colors.length !== 1 && colors.length !== 3);
     } 
     return false;
   }
   
   export function resultRoundClicked(round: number) {
-      if (resultRound == round ) {
-          showResults = !showResults;
-      }
-      resultRound = round;
+    if (resultRound == round ) {
+      showResults = !showResults;
+    }
+    resultRound = round;
   }
   
   export function resultIsGreen(playerIndex: number, cardIndex: number): boolean {
     let roundIndex = resultRound - 1;
     if (roundIndex % 2 == 1) {
-        playerIndex = 1 - playerIndex;
+      playerIndex = 1 - playerIndex;
     }
     if (state.bunches.length <= roundIndex*2+playerIndex) {
-        return false;
+      return false;
     }
     if (state.bunches[roundIndex*2+playerIndex].cardIndices.length == 0) {
-        return false;
+      return false;
     }
     let index = state.bunches[roundIndex*2+playerIndex].cardIndices[cardIndex];
     return state.decks[roundIndex][index][2] == "green";
@@ -362,13 +357,13 @@ module game {
   export function resultIsPink(playerIndex: number, cardIndex: number): boolean {
     let roundIndex = resultRound - 1;
     if (roundIndex % 2 == 1) {
-        playerIndex = 1 - playerIndex;
+      playerIndex = 1 - playerIndex;
     }
     if (state.bunches.length <= roundIndex*2+playerIndex) {
-        return false;
+      return false;
     }
     if (state.bunches[roundIndex*2+playerIndex].cardIndices.length == 0) {
-        return false;
+      return false;
     }
     let index = state.bunches[roundIndex*2+playerIndex].cardIndices[cardIndex];
     return state.decks[roundIndex][index][2] == "pink";
@@ -377,13 +372,13 @@ module game {
   export function resultIsOrange(playerIndex: number, cardIndex: number): boolean {
     let roundIndex = resultRound - 1;
     if (roundIndex % 2 == 1) {
-        playerIndex = 1 - playerIndex;
+      playerIndex = 1 - playerIndex;
     }
     if (state.bunches.length <= roundIndex*2+playerIndex) {
-        return false;
+      return false;
     }
     if (state.bunches[roundIndex*2+playerIndex].cardIndices.length == 0) {
-        return false;
+      return false;
     }
     let index = state.bunches[roundIndex*2+playerIndex].cardIndices[cardIndex];
     return state.decks[roundIndex][index][2] == "orange";
@@ -392,13 +387,13 @@ module game {
   export function resultIsSolid(playerIndex: number, cardIndex: number): boolean {
     let roundIndex = resultRound - 1;
     if (roundIndex % 2 == 1) {
-        playerIndex = 1 - playerIndex;
+      playerIndex = 1 - playerIndex;
     }
     if (state.bunches.length <= roundIndex*2+playerIndex) {
-        return false;
+      return false;
     }
     if (state.bunches[roundIndex*2+playerIndex].cardIndices.length == 0) {
-        return false;
+      return false;
     }
     let index = state.bunches[roundIndex*2+playerIndex].cardIndices[cardIndex];
     return state.decks[roundIndex][index][3] == "solid";
@@ -407,13 +402,13 @@ module game {
   export function resultIsDotted(playerIndex: number, cardIndex: number): boolean {
     let roundIndex = resultRound - 1;
     if (roundIndex % 2 == 1) {
-        playerIndex = 1 - playerIndex;
+      playerIndex = 1 - playerIndex;
     }
     if (state.bunches.length <= roundIndex*2+playerIndex) {
-        return false;
+      return false;
     }
     if (state.bunches[roundIndex*2+playerIndex].cardIndices.length == 0) {
-        return false;
+      return false;
     }
     let index = state.bunches[roundIndex*2+playerIndex].cardIndices[cardIndex];
     return state.decks[roundIndex][index][3] == "dotted";
@@ -422,13 +417,13 @@ module game {
   export function resultIsDouble(playerIndex: number, cardIndex: number): boolean {
     let roundIndex = resultRound - 1;
     if (roundIndex % 2 == 1) {
-        playerIndex = 1 - playerIndex;
+      playerIndex = 1 - playerIndex;
     }
     if (state.bunches.length <= roundIndex*2+playerIndex) {
-        return false;
+      return false;
     }
     if (state.bunches[roundIndex*2+playerIndex].cardIndices.length == 0) {
-        return false;
+      return false;
     }
     let index = state.bunches[roundIndex*2+playerIndex].cardIndices[cardIndex];
     return state.decks[roundIndex][index][3] == "double";
@@ -438,48 +433,23 @@ module game {
     let emoji = "";
     let roundIndex = resultRound - 1;
     if (roundIndex % 2 == 1) {
-        playerIndex = 1 - playerIndex;
+      playerIndex = 1 - playerIndex;
     }
     
     if (state.bunches.length <= roundIndex*2+playerIndex) {
-        return "";
+      return "";
     }
     if (state.bunches[roundIndex*2+playerIndex].cardIndices.length == 0) {
-        return "";
+      return "";
     }
     let index = state.bunches[roundIndex*2+playerIndex].cardIndices[cardIndex];
     
-    
     let count = parseInt(state.decks[roundIndex][index][1]);
     for (let i = 0; i < count; i++) {
-        emoji += state.decks[roundIndex][index][0];
+      emoji += state.decks[roundIndex][index][0];
     }
     return emoji;
   }
-  
-  
-  
-  
-  
-
-//   export function shouldShowImage(row: number, col: number): boolean {
-//     let cell = state.board[row][col];
-//     return cell !== "";
-//   }
-
-//   export function isPieceX(row: number, col: number): boolean {
-//     return state.board[row][col] === 'X';
-//   }
-
-//   export function isPieceO(row: number, col: number): boolean {
-//     return state.board[row][col] === 'O';
-//   }
-
-//   export function shouldSlowlyAppear(row: number, col: number): boolean {
-//     return !animationEnded &&
-//         state.delta &&
-//         state.delta.row === row && state.delta.col === col;
-//   }
 
   export function clickedOnModal(evt: Event) {
     if (evt.target === evt.currentTarget) {

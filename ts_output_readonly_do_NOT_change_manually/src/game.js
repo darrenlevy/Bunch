@@ -69,7 +69,6 @@ var game;
         $rootScope.$apply(function () {
             log.info("Animation ended");
             game.animationEnded = true;
-            //sendComputerMove();
         });
     }
     function sendComputerMove() {
@@ -103,7 +102,6 @@ var game;
         if (game.isComputerTurn) {
             // To make sure the player won't click something and send a move instead of the computer sending a move.
             game.canMakeMove = false;
-            //if (!state.bunches) {
             sendComputerMove();
         }
     }
@@ -441,21 +439,6 @@ var game;
         return emoji;
     }
     game.getResultEmoji = getResultEmoji;
-    //   export function shouldShowImage(row: number, col: number): boolean {
-    //     let cell = state.board[row][col];
-    //     return cell !== "";
-    //   }
-    //   export function isPieceX(row: number, col: number): boolean {
-    //     return state.board[row][col] === 'X';
-    //   }
-    //   export function isPieceO(row: number, col: number): boolean {
-    //     return state.board[row][col] === 'O';
-    //   }
-    //   export function shouldSlowlyAppear(row: number, col: number): boolean {
-    //     return !animationEnded &&
-    //         state.delta &&
-    //         state.delta.row === row && state.delta.col === col;
-    //   }
     function clickedOnModal(evt) {
         if (evt.target === evt.currentTarget) {
             evt.preventDefault();

@@ -15,29 +15,30 @@ module aiService {
     let possibleMoves: IMove[] = [];
     for (let i = 0; i < gameLogic.DECK_SIZE; i++) {
       for (let j = i+1; j < gameLogic.DECK_SIZE; j++) {
-          for (let k = j+1; k < gameLogic.DECK_SIZE; k++) {
-            try {
-                if (state.bunches.length % 2 == 1 && state.bunches[state.bunches.length-1].cardIndices.sort() == [i, j, k].sort()) {
-                    continue; //Don't let AI make same move as last player
-                }
-                let deck = state.decks[state.round-1];
-                let card1 = deck[i];
-                let card2 = deck[j];
-                let card3 = deck[k];
-                let points = gameLogic.pointsForMove([card1, card2, card3], seconds);
-                
-                if (points >= 0) {
-                    possibleMoves.push(gameLogic.createMove(state, [i, j, k], seconds, turnIndexBeforeMove, state.round, state.scores));
-                }
-            } catch (e) {
-                // Invalid move
+        for (let k = j+1; k < gameLogic.DECK_SIZE; k++) {
+          try {
+            if (state.bunches.length % 2 == 1 && state.bunches[state.bunches.length-1].cardIndices.sort() == [i, j, k].sort()) {
+                continue; //Don't let AI make same move as last player
             }
+            
+            let deck = state.decks[state.round-1];
+            let card1 = deck[i];
+            let card2 = deck[j];
+            let card3 = deck[k];
+            let points = gameLogic.pointsForMove([card1, card2, card3], seconds);
+            
+            if (points >= 0) {
+              possibleMoves.push(gameLogic.createMove(state, [i, j, k], seconds, turnIndexBeforeMove, state.round, state.scores));
+            }
+          } catch (e) {
+            // Invalid move
           }
+        }
       }
     }
 
     if (possibleMoves.length == 0) {
-        possibleMoves.push(gameLogic.createMove(state, [], seconds, turnIndexBeforeMove, state.round, state.scores));
+      possibleMoves.push(gameLogic.createMove(state, [], seconds, turnIndexBeforeMove, state.round, state.scores));
     }
 
     return possibleMoves;

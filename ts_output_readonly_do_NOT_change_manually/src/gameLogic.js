@@ -157,10 +157,8 @@ var gameLogic;
         var scores = stateBeforeMove ? stateBeforeMove.scores : [0, 0];
         var expectedMove = createMove(stateBeforeMove, cardIndices, seconds, turnIndexBeforeMove, round, scores);
         if (!angular.equals(move, expectedMove)) {
-            //throw new Error("Move calculated=" + angular.toJson(expectedMove, true) +
-            //  ", move expected=" + angular.toJson(move, true))
-            throw new Error("Move calculated=" + expectedMove.stateAfterMove.scores +
-                ", move expected=" + move.stateAfterMove.scores);
+            throw new Error("Move calculated=" + angular.toJson(expectedMove, true) +
+                ", move expected=" + angular.toJson(move, true));
         }
     }
     gameLogic.checkMoveOk = checkMoveOk;
