@@ -51,7 +51,7 @@ module gameLogic {
   }
   
   function getRandomColor(): string {
-    let colors = ["pink", "orange", "green"];
+    let colors = ["pink", "orange", "blue"];
     let index = Math.floor(Math.random()*100 % NUMBER_OF_TYPES);
     return colors[index];
   }

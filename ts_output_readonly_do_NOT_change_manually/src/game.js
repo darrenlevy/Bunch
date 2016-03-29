@@ -207,10 +207,10 @@ var game;
         return emoji;
     }
     game.getEmoji = getEmoji;
-    function isGreen(index) {
-        return game.state.decks[game.deckIndex][index][2] == "green";
+    function isBlue(index) {
+        return game.state.decks[game.deckIndex][index][2] == "blue";
     }
-    game.isGreen = isGreen;
+    game.isBlue = isBlue;
     function isPink(index) {
         return game.state.decks[game.deckIndex][index][2] == "pink";
     }
@@ -337,7 +337,7 @@ var game;
         game.resultRound = round;
     }
     game.resultRoundClicked = resultRoundClicked;
-    function resultIsGreen(playerIndex, cardIndex) {
+    function resultIsBlue(playerIndex, cardIndex) {
         var roundIndex = game.resultRound - 1;
         if (roundIndex % 2 == 1) {
             playerIndex = 1 - playerIndex;
@@ -349,9 +349,9 @@ var game;
             return false;
         }
         var index = game.state.bunches[roundIndex * 2 + playerIndex].cardIndices[cardIndex];
-        return game.state.decks[roundIndex][index][2] == "green";
+        return game.state.decks[roundIndex][index][2] == "blue";
     }
-    game.resultIsGreen = resultIsGreen;
+    game.resultIsBlue = resultIsBlue;
     function resultIsPink(playerIndex, cardIndex) {
         var roundIndex = game.resultRound - 1;
         if (roundIndex % 2 == 1) {

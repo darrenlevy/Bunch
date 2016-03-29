@@ -217,8 +217,8 @@ module game {
     return emoji;
   }
  
-  export function isGreen(index: number): boolean {
-    return state.decks[deckIndex][index][2] == "green";
+  export function isBlue(index: number): boolean {
+    return state.decks[deckIndex][index][2] == "blue";
   }
   
   export function isPink(index: number): boolean {
@@ -272,7 +272,7 @@ module game {
         return false;
       }
       let deck = state.decks[state.round-1]
-      let possibleMoves = aiService.getPossibleMoves(state, move.turnIndexAfterMove)
+      let possibleMoves = aiService.getPossibleMoves(state, move.turnIndexAfterMove);
       let validMoveExists = false;
       for (let i = 0; i < possibleMoves.length; i++) {
         let possibleMove = possibleMoves[i];
@@ -297,7 +297,7 @@ module game {
       }
       return -1 == index && seconds > 30 && !validMoveExists;
   }
-  
+
   export function shouldShakeCard(index: number): boolean {
     if (cardsPlayed.indexOf(index) !== -1) {
       let borders : string[] = [];
@@ -348,7 +348,7 @@ module game {
     resultRound = round;
   }
   
-  export function resultIsGreen(playerIndex: number, cardIndex: number): boolean {
+  export function resultIsBlue(playerIndex: number, cardIndex: number): boolean {
     let roundIndex = resultRound - 1;
     if (roundIndex % 2 == 1) {
       playerIndex = 1 - playerIndex;
@@ -360,7 +360,7 @@ module game {
       return false;
     }
     let index = state.bunches[roundIndex*2+playerIndex].cardIndices[cardIndex];
-    return state.decks[roundIndex][index][2] == "green";
+    return state.decks[roundIndex][index][2] == "blue";
   }
   
   export function resultIsPink(playerIndex: number, cardIndex: number): boolean {

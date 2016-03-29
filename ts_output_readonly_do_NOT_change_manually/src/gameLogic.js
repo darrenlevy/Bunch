@@ -34,7 +34,7 @@ var gameLogic;
         return String(count);
     }
     function getRandomColor() {
-        var colors = ["pink", "orange", "green"];
+        var colors = ["pink", "orange", "blue"];
         var index = Math.floor(Math.random() * 100 % gameLogic.NUMBER_OF_TYPES);
         return colors[index];
     }
