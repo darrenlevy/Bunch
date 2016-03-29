@@ -157,10 +157,8 @@ var gameLogic;
         var scores = stateBeforeMove ? stateBeforeMove.scores : [0, 0];
         var expectedMove = createMove(stateBeforeMove, cardIndices, seconds, turnIndexBeforeMove, round, scores);
         if (!angular.equals(move, expectedMove)) {
-            //throw new Error("Move calculated=" + angular.toJson(expectedMove, true) +
-            //  ", move expected=" + angular.toJson(move, true))
-            throw new Error("Move calculated=" + expectedMove.stateAfterMove.scores +
-                ", move expected=" + move.stateAfterMove.scores);
+            throw new Error("Move calculated=" + angular.toJson(expectedMove, true) +
+                ", move expected=" + angular.toJson(move, true));
         }
     }
     gameLogic.checkMoveOk = checkMoveOk;
@@ -176,7 +174,7 @@ var game;
     game.animationEnded = false;
     game.canMakeMove = false;
     game.isComputerTurn = false;
-    game.move = null;
+    game.move = null; //prior move
     game.state = null;
     game.isHelpModalShown = false;
     game.cards = [];
@@ -238,7 +236,6 @@ var game;
         $rootScope.$apply(function () {
             log.info("Animation ended");
             game.animationEnded = true;
-            //sendComputerMove();
         });
     }
     function sendComputerMove() {
@@ -255,6 +252,9 @@ var game;
         game.state = game.move.stateAfterMove;
         if (!game.state) {
             game.state = gameLogic.getInitialState();
+            game.move.endMatchScores = [0, 0];
+            game.move.turnIndexAfterMove = 0;
+            game.move.stateAfterMove = game.state;
         }
         resetBoard(game.state.scores);
         game.canMakeMove = game.move.turnIndexAfterMove >= 0 &&
@@ -269,7 +269,6 @@ var game;
         if (game.isComputerTurn) {
             // To make sure the player won't click something and send a move instead of the computer sending a move.
             game.canMakeMove = false;
-            //if (!state.bunches) {
             sendComputerMove();
         }
     }
@@ -322,7 +321,7 @@ var game;
     }
     game.isCurrentPlayerIndex = isCurrentPlayerIndex;
     function startClicked() {
-        if (gameIsOver()) {
+        if (gameIsOver() || !game.canMakeMove) {
             return;
         }
         game.roundStarted = true;
@@ -341,8 +340,10 @@ var game;
         game.player2Score = scores[1];
     }
     function passMove() {
-        game.cards = [];
-        submitMove();
+        if (game.canMakeMove) {
+            game.cards = [];
+            submitMove();
+        }
     }
     game.passMove = passMove;
     function submitMove() {
@@ -411,6 +412,49 @@ var game;
         return false;
     }
     game.shouldFlip = shouldFlip;
+    function alreadyPlayedCard(index) {
+        if (game.state && game.state.bunches.length % 2 == 1) {
+            var lastBunchIndex = game.state.bunches.length - 1;
+            var lastBunch = game.state.bunches[lastBunchIndex];
+            return lastBunch.cardIndices.indexOf(index) !== -1;
+        }
+        return false;
+    }
+    function shouldHintCardIndex(index) {
+        if (gameIsOver()) {
+            return false;
+        }
+        if (game.seconds < 20) {
+            return false;
+        }
+        var deck = game.state.decks[game.state.round - 1];
+        var possibleMoves = aiService.getPossibleMoves(game.state, game.move.turnIndexAfterMove);
+        var validMoveExists = false;
+        for (var i = 0; i < possibleMoves.length; i++) {
+            var possibleMove = possibleMoves[i];
+            var bunches = possibleMove.stateAfterMove.bunches;
+            var lastBunch = bunches[bunches.length - 1];
+            var alreadyPlayed = false;
+            for (var y = 0; y < lastBunch.cardIndices.length; y++) {
+                alreadyPlayed = alreadyPlayedCard(lastBunch.cardIndices[y]);
+                if (alreadyPlayed) {
+                    break;
+                }
+            }
+            if (alreadyPlayed) {
+                continue;
+            }
+            validMoveExists = true;
+            if (game.seconds == 20) {
+                return lastBunch.cardIndices[0] == index;
+            }
+            else if (game.seconds == 30) {
+                return lastBunch.cardIndices[1] == index;
+            }
+        }
+        return -1 == index && game.seconds > 30 && !validMoveExists;
+    }
+    game.shouldHintCardIndex = shouldHintCardIndex;
     function shouldShakeCard(index) {
         if (game.cardsPlayed.indexOf(index) !== -1) {
             var borders = [];
@@ -570,21 +614,6 @@ var game;
         return emoji;
     }
     game.getResultEmoji = getResultEmoji;
-    //   export function shouldShowImage(row: number, col: number): boolean {
-    //     let cell = state.board[row][col];
-    //     return cell !== "";
-    //   }
-    //   export function isPieceX(row: number, col: number): boolean {
-    //     return state.board[row][col] === 'X';
-    //   }
-    //   export function isPieceO(row: number, col: number): boolean {
-    //     return state.board[row][col] === 'O';
-    //   }
-    //   export function shouldSlowlyAppear(row: number, col: number): boolean {
-    //     return !animationEnded &&
-    //         state.delta &&
-    //         state.delta.row === row && state.delta.col === col;
-    //   }
     function clickedOnModal(evt) {
         if (evt.target === evt.currentTarget) {
             evt.preventDefault();

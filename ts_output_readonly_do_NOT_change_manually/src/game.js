@@ -245,6 +245,14 @@ var game;
         return false;
     }
     game.shouldFlip = shouldFlip;
+    function alreadyPlayedCard(index) {
+        if (game.state && game.state.bunches.length % 2 == 1) {
+            var lastBunchIndex = game.state.bunches.length - 1;
+            var lastBunch = game.state.bunches[lastBunchIndex];
+            return lastBunch.cardIndices.indexOf(index) !== -1;
+        }
+        return false;
+    }
     function shouldHintCardIndex(index) {
         if (gameIsOver()) {
             return false;
@@ -261,7 +269,7 @@ var game;
             var lastBunch = bunches[bunches.length - 1];
             var alreadyPlayed = false;
             for (var y = 0; y < lastBunch.cardIndices.length; y++) {
-                alreadyPlayed = shouldFlip(lastBunch.cardIndices[y]);
+                alreadyPlayed = alreadyPlayedCard(lastBunch.cardIndices[y]);
                 if (alreadyPlayed) {
                     break;
                 }

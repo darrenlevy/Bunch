@@ -255,6 +255,15 @@ module game {
     return false;
   }
   
+  function alreadyPlayedCard(index: number): boolean {
+   if (state && state.bunches.length % 2 == 1) {
+      let lastBunchIndex = state.bunches.length-1;
+      let lastBunch = state.bunches[lastBunchIndex];
+      return lastBunch.cardIndices.indexOf(index) !== -1; 
+    } 
+    return false;
+  }
+  
   export function shouldHintCardIndex(index: number): boolean {
       if (gameIsOver()) {
         return false;
@@ -271,7 +280,7 @@ module game {
         let lastBunch = bunches[bunches.length-1];
         let alreadyPlayed = false;
         for (let y = 0; y < lastBunch.cardIndices.length; y++) {
-          alreadyPlayed = shouldFlip(lastBunch.cardIndices[y]);
+          alreadyPlayed = alreadyPlayedCard(lastBunch.cardIndices[y]);
           if (alreadyPlayed) {
             break;
           }
