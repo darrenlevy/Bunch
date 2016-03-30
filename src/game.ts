@@ -268,7 +268,7 @@ module game {
       if (gameIsOver()) {
         return false;
       }
-      if (seconds < 20) {
+      if (seconds !== 20 && seconds !== 30 && seconds !== 35) {
         return false;
       }
       let deck = state.decks[state.round-1]

@@ -257,7 +257,7 @@ var game;
         if (gameIsOver()) {
             return false;
         }
-        if (game.seconds < 20) {
+        if (game.seconds !== 20 && game.seconds !== 30 && game.seconds !== 35) {
             return false;
         }
         var deck = game.state.decks[game.state.round - 1];
