@@ -142,7 +142,7 @@ module gameLogic {
     let scoresAfterMove = angular.copy(scores);
     scoresAfterMove[turnIndexBeforeMove] += points;
     let bunches: Bunches[] = angular.copy(stateBeforeMove.bunches);
-    bunches.push({cardIndices: cardIndices, seconds: seconds});
+    bunches.push({cardIndices: cardIndices.sort((a,b) => a-b), seconds: seconds});
     let winner : number[] = null;
     let turnIndexAfterMove: number;
     let roundAfterMove = angular.copy(round);
@@ -189,7 +189,30 @@ module gameLogic {
         round,
         scores
     );
-
+    if (!angular.equals(move.stateAfterMove.bunches, expectedMove.stateAfterMove.bunches)) {
+        throw new Error("Bunches found=" + angular.toJson(move.stateAfterMove.bunches, true) +
+          ", bunches expected=" + angular.toJson(expectedMove.stateAfterMove.bunches, true))
+    }
+   if (!angular.equals(move.stateAfterMove.decks, expectedMove.stateAfterMove.decks)) {
+        throw new Error("Deck found=" + angular.toJson(move.stateAfterMove.decks, true) +
+          ", deck expected=" + angular.toJson(expectedMove.stateAfterMove.decks, true))
+    }
+   if (!angular.equals(move.stateAfterMove.round, expectedMove.stateAfterMove.round)) {
+        throw new Error("Round found=" + angular.toJson(move.stateAfterMove.round, true) +
+          ", round expected=" + angular.toJson(expectedMove.stateAfterMove.round, true))
+    }
+    if (!angular.equals(move.stateAfterMove.scores, expectedMove.stateAfterMove.scores)) {
+        throw new Error("Scores found=" + angular.toJson(move.stateAfterMove.scores, true) +
+          ", scores expected=" + angular.toJson(expectedMove.stateAfterMove.scores, true))
+    }
+    if (!angular.equals(move.endMatchScores, expectedMove.endMatchScores)) {
+        throw new Error("endMatchScores found=" + angular.toJson(move.endMatchScores, true) +
+          ", endMatchScores expected=" + angular.toJson(expectedMove.endMatchScores, true))
+    }
+    if (!angular.equals(move.turnIndexAfterMove, expectedMove.turnIndexAfterMove)) {
+        throw new Error("turnIndexAfterMove found=" + angular.toJson(move.turnIndexAfterMove, true) +
+          ", turnIndexAfterMove expected=" + angular.toJson(expectedMove.turnIndexAfterMove, true))
+    }
     if (!angular.equals(move, expectedMove)) {  
       throw new Error("Move calculated=" + angular.toJson(expectedMove, true) +
           ", move expected=" + angular.toJson(move, true))

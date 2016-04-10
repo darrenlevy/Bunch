@@ -117,7 +117,7 @@ var gameLogic;
         var scoresAfterMove = angular.copy(scores);
         scoresAfterMove[turnIndexBeforeMove] += points;
         var bunches = angular.copy(stateBeforeMove.bunches);
-        bunches.push({ cardIndices: cardIndices, seconds: seconds });
+        bunches.push({ cardIndices: cardIndices.sort(function (a, b) { return a - b; }), seconds: seconds });
         var winner = null;
         var turnIndexAfterMove;
         var roundAfterMove = angular.copy(round);
@@ -156,6 +156,30 @@ var gameLogic;
         var round = stateBeforeMove ? stateBeforeMove.round : 1;
         var scores = stateBeforeMove ? stateBeforeMove.scores : [0, 0];
         var expectedMove = createMove(stateBeforeMove, cardIndices, seconds, turnIndexBeforeMove, round, scores);
+        if (!angular.equals(move.stateAfterMove.bunches, expectedMove.stateAfterMove.bunches)) {
+            throw new Error("Bunches found=" + angular.toJson(move.stateAfterMove.bunches, true) +
+                ", bunches expected=" + angular.toJson(expectedMove.stateAfterMove.bunches, true));
+        }
+        if (!angular.equals(move.stateAfterMove.decks, expectedMove.stateAfterMove.decks)) {
+            throw new Error("Deck found=" + angular.toJson(move.stateAfterMove.decks, true) +
+                ", deck expected=" + angular.toJson(expectedMove.stateAfterMove.decks, true));
+        }
+        if (!angular.equals(move.stateAfterMove.round, expectedMove.stateAfterMove.round)) {
+            throw new Error("Round found=" + angular.toJson(move.stateAfterMove.round, true) +
+                ", round expected=" + angular.toJson(expectedMove.stateAfterMove.round, true));
+        }
+        if (!angular.equals(move.stateAfterMove.scores, expectedMove.stateAfterMove.scores)) {
+            throw new Error("Scores found=" + angular.toJson(move.stateAfterMove.scores, true) +
+                ", scores expected=" + angular.toJson(expectedMove.stateAfterMove.scores, true));
+        }
+        if (!angular.equals(move.endMatchScores, expectedMove.endMatchScores)) {
+            throw new Error("endMatchScores found=" + angular.toJson(move.endMatchScores, true) +
+                ", endMatchScores expected=" + angular.toJson(expectedMove.endMatchScores, true));
+        }
+        if (!angular.equals(move.turnIndexAfterMove, expectedMove.turnIndexAfterMove)) {
+            throw new Error("turnIndexAfterMove found=" + angular.toJson(move.turnIndexAfterMove, true) +
+                ", turnIndexAfterMove expected=" + angular.toJson(expectedMove.turnIndexAfterMove, true));
+        }
         if (!angular.equals(move, expectedMove)) {
             throw new Error("Move calculated=" + angular.toJson(expectedMove, true) +
                 ", move expected=" + angular.toJson(move, true));
@@ -651,7 +675,7 @@ var aiService;
             for (var j = i + 1; j < gameLogic.DECK_SIZE; j++) {
                 for (var k = j + 1; k < gameLogic.DECK_SIZE; k++) {
                     try {
-                        if (state.bunches.length % 2 == 1 && state.bunches[state.bunches.length - 1].cardIndices.sort() == [i, j, k].sort()) {
+                        if (state.bunches.length % 2 == 1 && state.bunches[state.bunches.length - 1].cardIndices.sort(function (a, b) { return a - b; }) == [i, j, k].sort(function (a, b) { return a - b; })) {
                             continue; //Don't let AI make same move as last player
                         }
                         var deck = state.decks[state.round - 1];

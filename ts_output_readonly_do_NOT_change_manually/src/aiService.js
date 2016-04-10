@@ -18,7 +18,7 @@ var aiService;
             for (var j = i + 1; j < gameLogic.DECK_SIZE; j++) {
                 for (var k = j + 1; k < gameLogic.DECK_SIZE; k++) {
                     try {
-                        if (state.bunches.length % 2 == 1 && state.bunches[state.bunches.length - 1].cardIndices.sort() == [i, j, k].sort()) {
+                        if (state.bunches.length % 2 == 1 && state.bunches[state.bunches.length - 1].cardIndices.sort(function (a, b) { return a - b; }) == [i, j, k].sort(function (a, b) { return a - b; })) {
                             continue; //Don't let AI make same move as last player
                         }
                         var deck = state.decks[state.round - 1];

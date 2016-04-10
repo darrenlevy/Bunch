@@ -17,7 +17,7 @@ module aiService {
       for (let j = i+1; j < gameLogic.DECK_SIZE; j++) {
         for (let k = j+1; k < gameLogic.DECK_SIZE; k++) {
           try {
-            if (state.bunches.length % 2 == 1 && state.bunches[state.bunches.length-1].cardIndices.sort() == [i, j, k].sort()) {
+            if (state.bunches.length % 2 == 1 && state.bunches[state.bunches.length-1].cardIndices.sort((a,b) => a-b) == [i, j, k].sort((a,b) => a-b)) {
                 continue; //Don't let AI make same move as last player
             }
             
