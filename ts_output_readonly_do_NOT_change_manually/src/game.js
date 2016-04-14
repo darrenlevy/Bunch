@@ -63,6 +63,38 @@ var game;
                 en: "Close",
                 es: "Cerca",
             },
+            PLAYER: {
+                en: "Player",
+                es: "Jugador",
+            },
+            SCORE: {
+                en: "Score",
+                es: "Resultado",
+            },
+            START: {
+                en: "Start",
+                es: "Empieza",
+            },
+            WINS: {
+                en: "Wins",
+                es: "Gana",
+            },
+            TIE: {
+                en: "Tie",
+                es: "Empata",
+            },
+            ROUND: {
+                en: "Round",
+                es: "Ronda",
+            },
+            BONUS_POINTS: {
+                en: "Bonus Points",
+                es: "Puntos Extra",
+            },
+            I_CANNOT_FIND_A_BUNCH: {
+                en: "I cannot find a bunch",
+                es: "No puedo encontrar un manojo",
+            },
         };
     }
     function animationEndedCallback() {

@@ -193,32 +193,32 @@ module.exports = function(grunt) {
         src: []
       }
     },
-    'http-server': {
-        'dev': {
-            // the server root directory
-            root: '.',
-            port: 9000,
-            host: "0.0.0.0",
-            cache: 1,
-            showDir : true,
-            autoIndex: true,
-            // server default file extension
-            ext: "html",
-            // run in parallel with other tasks
-            runInBackground: true
-        }
-    },
-    protractor: {
-      options: {
-        configFile: "protractor.conf.js", // Default config file
-        keepAlive: false, // If false, the grunt process stops when the test fails.
-        noColor: false, // If true, protractor will not use colors in its output.
-        args: {
-          // Arguments passed to the command
-        }
-      },
-      all: {}
-    },
+    // 'http-server': {
+    //     'dev': {
+    //         // the server root directory
+    //         root: '.',
+    //         port: 9000,
+    //         host: "0.0.0.0",
+    //         cache: 1,
+    //         showDir : true,
+    //         autoIndex: true,
+    //         // server default file extension
+    //         ext: "html",
+    //         // run in parallel with other tasks
+    //         runInBackground: true
+    //     }
+    // },
+    // protractor: {
+    //   options: {
+    //     configFile: "protractor.conf.js", // Default config file
+    //     keepAlive: false, // If false, the grunt process stops when the test fails.
+    //     noColor: false, // If true, protractor will not use colors in its output.
+    //     args: {
+    //       // Arguments passed to the command
+    //     }
+    //   },
+    //   all: {}
+    // },
   });
 
   require('load-grunt-tasks')(grunt);
@@ -229,8 +229,8 @@ module.exports = function(grunt) {
       'karma',
       'copy',
       'concat', 'postcss', 'uglify',
-      'processhtml', 'manifest',
-      'http-server', 'protractor']);
-  grunt.registerTask('e2e', [
-      'http-server', 'protractor']);
+      'processhtml', 'manifest']);
+      //'http-server', 'protractor']);
+//   grunt.registerTask('e2e', [
+//       'http-server', 'protractor']);
 };
