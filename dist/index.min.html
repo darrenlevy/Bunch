@@ -77,13 +77,13 @@
   <div id="gameArea">
     <div class="row">
         <div class="column menu" style="left:1%;">
-            <div id="e2e_test_player_1_score" class="score" ng-class="{currentPlayer: game.isCurrentPlayerIndex(0)}">{{ 'PLAYER' | translate }} 1 {{ 'SCORE' | translate }}: {{game.player1Score}}</div>
-            <div id="e2e_test_player_2_score" class="score" ng-class="{currentPlayer: game.isCurrentPlayerIndex(1)}">{{ 'PLAYER' | translate }} 2 {{ 'SCORE' | translate }}: {{game.player2Score}}</div>
+            <div id="e2e_test_player_1_score" class="score" ng-class="{currentPlayer: game.isCurrentPlayerIndex(0)}">{{ 'PLAYER' | translate }} 1: {{game.player1Score}}</div>
+            <div id="e2e_test_player_2_score" class="score" ng-class="{currentPlayer: game.isCurrentPlayerIndex(1)}">{{ 'PLAYER' | translate }} 2: {{game.player2Score}}</div>
         </div>
         <div class="column menu" style="left:33%;" ng-class="{grow: game.shouldHintCardIndex(-1)}">
-            <div id="e2e_test_pass_move" class="pass-text" ng-click="game.passMove()" ng-class="{hideArea: !game.roundStarted || game.gameIsOver()}">{{ 'I_CANNOT_FIND_A_BUNCH' | translate }}</div>
-            <div id="e2e_test_start_1" class="start-text" ng-click="game.startClicked()" ng-class="{hideArea: game.roundStarted || game.gameIsOver() || !game.isCurrentPlayerIndex(0)}">{{ 'START' | translate }}: {{ 'PLAYER' | translate }} 1</div>
-            <div id="e2e_test_start_2" class="start-text" ng-click="game.startClicked()" ng-class="{hideArea: game.roundStarted || game.gameIsOver() || !game.isCurrentPlayerIndex(1)}">{{ 'START' | translate }}: {{ 'PLAYER' | translate }} 2</div>
+            <div id="e2e_test_pass_move" class="pass-text" ng-click="game.passMove()" ng-class="{hideArea: !game.roundStarted || game.gameIsOver() || game.seconds < 3}">{{ 'I_CANNOT_FIND_A_BUNCH' | translate }}</div>
+            <div id="e2e_test_start_1" class="start-text" ng-click="game.startClicked()" ng-class="{hideArea: game.roundStarted || game.gameIsOver() || !game.isCurrentPlayerIndex(0)}">{{ 'PRESS_TO_START' | translate }}: {{ 'PLAYER' | translate }} 1</div>
+            <div id="e2e_test_start_2" class="start-text" ng-click="game.startClicked()" ng-class="{hideArea: game.roundStarted || game.gameIsOver() || !game.isCurrentPlayerIndex(1)}">{{ 'PRESS_TO_START' | translate }}: {{ 'PLAYER' | translate }} 2</div>
             <div id="e2e_test_player_1_wins" class="winner-text" ng-class="{hideArea: !game.isWinner(1)}">{{ 'PLAYER' | translate }} 1 {{ 'WINS' | translate }}</div>
             <div id="e2e_test_player_2_wins" class="winner-text" ng-class="{hideArea: !game.isWinner(2)}">{{ 'PLAYER' | translate }} 2 {{ 'WINS' | translate }}</div>
             <div id="e2e_test_player_tie" class="winner-text" ng-class="{hideArea: !game.isWinner(0)}">{{ 'TIE' | translate }}</div>

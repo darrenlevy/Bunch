@@ -73,13 +73,9 @@ module game {
         en: "Player",
         es: "Jugador",
       },
-      SCORE:  {
-        en: "Score",
-        es: "Resultado",
-      },
-      START:  {
-        en: "Start",
-        es: "Empieza",
+      PRESS_TO_START:  {
+        en: "Press to start",
+        es: "Pulse para empezar",
       },
       WINS:  {
         en: "Wins",
