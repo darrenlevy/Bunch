@@ -262,6 +262,7 @@ module game {
         return;
     }
     roundStarted = true;
+    showResults = false;
     cardsPlayed = [];
     timer = $interval(function () {
       seconds++;

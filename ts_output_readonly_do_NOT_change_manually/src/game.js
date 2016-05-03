@@ -252,6 +252,7 @@ var game;
             return;
         }
         game.roundStarted = true;
+        game.showResults = false;
         game.cardsPlayed = [];
         timer = $interval(function () {
             game.seconds++;
