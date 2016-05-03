@@ -17,6 +17,127 @@
   <script>
     angular.module('myApp', []).run(function () { resizeGameAreaService.setWidthToHeight(3/2); });
   </script>
+  
+  <style>
+    .container {
+  width: 20px;
+  height: 20px;
+  position: relative;
+  perspective: 1000px;
+}
+
+
+
+.cube {
+  display: block;
+  background: yellow;
+  height: 30px;
+  width: 30px;
+  margin: 0;
+  border: 2px solid black;
+}
+
+
+.sphere {
+  margin: 0;
+  width: 20px;
+  height: 20px;
+  display: block;
+  position: absolute;
+  border: 2px solid yellow;
+  //background-color:yellow;
+  transform-style: preserve-3d;
+  border-radius: 50%;
+}
+
+.cylinder {
+  margin: 0;
+  width: 50px;
+  height: 20px;
+  display: block;
+  position: absolute;
+  border: 2px solid black;
+  background: repeating-linear-gradient(
+  to right,
+  purple,
+  darkorchid 10px,
+  #000 10px
+  
+);
+  transform-style: preserve-3d;
+  border-radius: 10%;
+}
+
+
+
+
+.spin {
+  animation: spin 2s infinite;
+}
+
+@keyframes spin {
+  0%{
+    -webkit-transform: none;
+    transform: none;
+  }
+  100%{
+    -webkit-transform: translateZ( -10px ) rotateY( -360deg );
+    transform: translateZ( -10px ) rotateY( -360deg );
+  }
+}
+
+.ball {
+  display: block;
+  background: black;
+  margin: 0;
+  border-radius: 100%;
+  height: 50%;
+  width: 50%;
+  background: radial-gradient(circle at 100px 100px, #5cabff, #000);
+  animation: dribble 2s infinite;
+
+}
+.ball .shadow {
+position: absolute;
+width: 100%;
+height: 100%;
+background: radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.1) 40%, rgba(0, 0, 0, 0) 50%);
+-webkit-transform: rotateX(90deg) translateZ(-150px);
+transform: rotateX(90deg) translateZ(-150px);
+z-index: -1;
+}
+
+@keyframes dribble {
+  0%{
+     border-radius: 50%;
+  }
+  50%{
+     border-radius: 100%;
+  }
+  100%{
+    border-radius: 50%;
+  }
+  
+}
+
+.stage {
+  width: 300px;
+  height: 300px;
+  -webkit-perspective: 1200px;
+  -moz-perspective: 1200px;
+  -ms-perspective: 1200px;
+  -o-perspective: 1200px;
+  perspective: 1200px;
+  -webkit-perspective-origin: 50% 50%;
+  -moz-perspective-origin: 50% 50%;
+  -ms-perspective-origin: 50% 50%;
+  -o-perspective-origin: 50% 50%;
+  perspective-origin: 50% 50%;
+}
+
+
+
+  </style>
 </head>
 <body>
 <div id="gameArea">
@@ -24,17 +145,16 @@
   <div class="row" style="top:0%">
     <div class="column blue solid selected" style="left:0%;">
       
-        ♫ ♫ ♫
+        <div class="cube"></div>&nbsp;<div class="cube">1</div>
+
         
     </div>
     <div class="column blue solid" style="left:25%;">
-
-        ☺ ☺
-
+      <figure class="sphere">2</figure>
     </div>
     <div class="column pink dotted selected" style="left:50%;">
 
-          ♫ ♫ ♫
+                 <figure class="cylinder">3</figure>
 
     </div>
     <div class="column orange solid" style="left:75%;">

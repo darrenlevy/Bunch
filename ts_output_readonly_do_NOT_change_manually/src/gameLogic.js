@@ -25,7 +25,7 @@ var gameLogic;
         return deck;
     }
     function getRandomSymbol() {
-        var symbols = ["♡", "✰", "♢"];
+        var symbols = ["square", "circle", "rectangle"];
         var index = Math.floor(Math.random() * 100 % gameLogic.NUMBER_OF_TYPES);
         return symbols[index];
     }

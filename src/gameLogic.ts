@@ -40,7 +40,7 @@ module gameLogic {
   }
   
   function getRandomSymbol(): string {
-    let symbols = ["♡", "✰", "♢"];
+    let symbols = ["square", "circle", "rectangle"];
     let index = Math.floor(Math.random()*100 % NUMBER_OF_TYPES);
     return symbols[index];
   }

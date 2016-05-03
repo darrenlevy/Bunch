@@ -155,7 +155,7 @@ module game {
         hi: "बोनस अंक",
       },
       I_CANNOT_FIND_A_BUNCH:  {
-        en: "I cannot find a bunch",
+        en: "I cannot find a Bunch",
         es: "No puedo encontrar un Manojo",
         iw: "אני לא יכול למצוא חבורה",
         pt: "Não consigo encontrar uma Bunch",
@@ -304,12 +304,11 @@ module game {
   }
  
   export function getEmoji(index: number): String {
-    let emoji = "";
-    let count = parseInt(state.decks[deckIndex][index][1])
-    for (let i = 0; i < count; i++) {
-      emoji += state.decks[deckIndex][index][0] + " ";
-    }
-    return emoji;
+    return state.decks[deckIndex][index][0];
+  }
+  
+  export function getEmojiCount(index: number): Number {
+    return parseInt(state.decks[deckIndex][index][1]);
   }
  
   export function isBlue(index: number): boolean {
@@ -534,7 +533,6 @@ module game {
   }
   
   export function getResultEmoji(playerIndex: number, cardIndex: number): String {
-    let emoji = "";
     let roundIndex = resultRound - 1;
     if (roundIndex % 2 == 1) {
       playerIndex = 1 - playerIndex;
@@ -546,13 +544,25 @@ module game {
     if (state.bunches[roundIndex*2+playerIndex].cardIndices.length == 0) {
       return "";
     }
+    let index = state.bunches[roundIndex*2+playerIndex].cardIndices[cardIndex];    
+    return state.decks[roundIndex][index][0];
+  }
+  
+  export function getResultEmojiCount(playerIndex: number, cardIndex: number): Number {
+    let roundIndex = resultRound - 1;
+    if (roundIndex % 2 == 1) {
+      playerIndex = 1 - playerIndex;
+    }
+    
+    if (state.bunches.length <= roundIndex*2+playerIndex) {
+      return 0;
+    }
+    if (state.bunches[roundIndex*2+playerIndex].cardIndices.length == 0) {
+      return 0;
+    }
     let index = state.bunches[roundIndex*2+playerIndex].cardIndices[cardIndex];
     
-    let count = parseInt(state.decks[roundIndex][index][1]);
-    for (let i = 0; i < count; i++) {
-      emoji += state.decks[roundIndex][index][0];
-    }
-    return emoji;
+    return parseInt(state.decks[roundIndex][index][1]);
   }
 
   export function clickedOnModal(evt: Event) {

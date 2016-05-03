@@ -135,7 +135,32 @@
                 }"
             ng-click="game.cardClicked(row * 4 + col)"
             id="{{'e2e_test_div_' + row * 4 + col}}">
-          <div class='emoji' ng-class="{bounce: game.shouldBounceEmoji(row * 4 + col), flipped: game.shouldFlip(row * 4 + col)}">{{game.getEmoji(row * 4 + col)}}</div>
+          <div class="emoji-row">
+            <div class="emoji" ng-class="{
+              square: game.getEmoji(row * 4 + col) == 'square', 
+              circle: game.getEmoji(row * 4 + col) == 'circle', 
+              rectangle: game.getEmoji(row * 4 + col) == 'rectangle', 
+              bounce: game.shouldBounceEmoji(row * 4 + col), 
+              flipped: game.shouldFlip(row * 4 + col)
+              }">
+            </div><div ng-if="game.getEmojiCount(row * 4 + col) > 1">&nbsp;</div>
+            <div class="emoji" ng-if="game.getEmojiCount(row * 4 + col) > 1" ng-class="{
+              square: game.getEmoji(row * 4 + col) == 'square', 
+              circle: game.getEmoji(row * 4 + col) == 'circle', 
+              rectangle: game.getEmoji(row * 4 + col) == 'rectangle', 
+              bounce: game.shouldBounceEmoji(row * 4 + col), 
+              flipped: game.shouldFlip(row * 4 + col)
+              }">
+            </div><div ng-if="game.getEmojiCount(row * 4 + col) > 1">&nbsp;</div>
+            <div class="emoji" ng-if="game.getEmojiCount(row * 4 + col) > 2" ng-class="{
+              square: game.getEmoji(row * 4 + col) == 'square', 
+              circle: game.getEmoji(row * 4 + col) == 'circle', 
+              rectangle: game.getEmoji(row * 4 + col) == 'rectangle', 
+              bounce: game.shouldBounceEmoji(row * 4 + col), 
+              flipped: game.shouldFlip(row * 4 + col)
+              }">
+            </div>
+          </div>
         </div>
     </div>
 
@@ -151,7 +176,26 @@
                 double: game.resultIsDouble(row, col),
                 }"
             id="{{'e2e_test_result_div_' + row + '_' + col}}">
-          <div class='emoji'>{{game.getResultEmoji(row, col)}}</div>
+            <div class="emoji-row">
+            <div class="emoji" ng-if="game.getResultEmojiCount(row, col) > 0" ng-class="{
+              square: game.getResultEmoji(row, col) == 'square', 
+              circle: game.getResultEmoji(row, col) == 'circle', 
+              rectangle: game.getResultEmoji(row, col) == 'rectangle'
+              }">
+            </div><div ng-if="game.getResultEmojiCount(row, col) > 1">&nbsp;</div>
+            <div class="emoji" ng-if="game.getResultEmojiCount(row, col) > 1" ng-class="{
+              square: game.getResultEmoji(row, col) == 'square', 
+              circle: game.getResultEmoji(row, col) == 'circle', 
+              rectangle: game.getResultEmoji(row, col) == 'rectangle'
+              }">
+            </div><div ng-if="game.getResultEmojiCount(row, col) > 1">&nbsp;</div>
+            <div class="emoji" ng-if="game.getResultEmojiCount(row, col) > 2" ng-class="{
+              square: game.getResultEmoji(row, col) == 'square', 
+              circle: game.getResultEmoji(row, col) == 'circle', 
+              rectangle: game.getResultEmoji(row, col) == 'rectangle'
+              }">
+            </div>
+          </div>
         </div>
     </div>
   </div>

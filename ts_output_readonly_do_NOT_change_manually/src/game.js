@@ -148,7 +148,7 @@ var game;
                 hi: "बोनस अंक",
             },
             I_CANNOT_FIND_A_BUNCH: {
-                en: "I cannot find a bunch",
+                en: "I cannot find a Bunch",
                 es: "No puedo encontrar un Manojo",
                 iw: "אני לא יכול למצוא חבורה",
                 pt: "Não consigo encontrar uma Bunch",
@@ -293,14 +293,13 @@ var game;
     }
     game.submitMove = submitMove;
     function getEmoji(index) {
-        var emoji = "";
-        var count = parseInt(game.state.decks[game.deckIndex][index][1]);
-        for (var i = 0; i < count; i++) {
-            emoji += game.state.decks[game.deckIndex][index][0] + " ";
-        }
-        return emoji;
+        return game.state.decks[game.deckIndex][index][0];
     }
     game.getEmoji = getEmoji;
+    function getEmojiCount(index) {
+        return parseInt(game.state.decks[game.deckIndex][index][1]);
+    }
+    game.getEmojiCount = getEmojiCount;
     function isBlue(index) {
         return game.state.decks[game.deckIndex][index][2] == "blue";
     }
@@ -522,7 +521,6 @@ var game;
     }
     game.resultIsDouble = resultIsDouble;
     function getResultEmoji(playerIndex, cardIndex) {
-        var emoji = "";
         var roundIndex = game.resultRound - 1;
         if (roundIndex % 2 == 1) {
             playerIndex = 1 - playerIndex;
@@ -534,13 +532,24 @@ var game;
             return "";
         }
         var index = game.state.bunches[roundIndex * 2 + playerIndex].cardIndices[cardIndex];
-        var count = parseInt(game.state.decks[roundIndex][index][1]);
-        for (var i = 0; i < count; i++) {
-            emoji += game.state.decks[roundIndex][index][0];
-        }
-        return emoji;
+        return game.state.decks[roundIndex][index][0];
     }
     game.getResultEmoji = getResultEmoji;
+    function getResultEmojiCount(playerIndex, cardIndex) {
+        var roundIndex = game.resultRound - 1;
+        if (roundIndex % 2 == 1) {
+            playerIndex = 1 - playerIndex;
+        }
+        if (game.state.bunches.length <= roundIndex * 2 + playerIndex) {
+            return 0;
+        }
+        if (game.state.bunches[roundIndex * 2 + playerIndex].cardIndices.length == 0) {
+            return 0;
+        }
+        var index = game.state.bunches[roundIndex * 2 + playerIndex].cardIndices[cardIndex];
+        return parseInt(game.state.decks[roundIndex][index][1]);
+    }
+    game.getResultEmojiCount = getResultEmojiCount;
     function clickedOnModal(evt) {
         if (evt.target === evt.currentTarget) {
             evt.preventDefault();

@@ -27,6 +27,8 @@ body{
 .card {
   width: 20%;
   font-size: 30px;
+  border: 7px solid rgba(255, 255, 255, 0.3);
+
 }
 
 .menu {
@@ -57,30 +59,6 @@ body{
   .menu {
     font-size: 9px;
   }
-}
-
-.blue {
-  color: #3d3dea;
-}
-
-.orange {
-  color: orange;
-} 
-
-.pink {
-  color: #FF69B4;
-}
-
-.solid {
-  border: 7px solid rgba(255, 0, 0, 0.3);
-}
-
-.dotted {
-  border: 7px dotted rgba(255, 0, 0, 0.3);
-}
-
-.double {
-  border: 10px double rgba(255, 0, 0, 0.3);
 }
 
 .selected {
@@ -189,21 +167,7 @@ td {
 }
 
 .currentPlayer {
-  color: rgba(0, 0, 255, 0.3);  
-}
-
-.flipped {
-  animation: flip 0.5s linear;
-  transform: rotateX(180deg);
-}
-
-@keyframes flip {
-    from {
-        transform: rotateX(0deg);
-    }
-    to {
-        transform: rotateX(180deg);
-    }
+  color: rgba(0, 200, 0, 1);  
 }
 
 .help-tip {
@@ -228,4 +192,105 @@ td {
 
 .hideArea {
   display: none;
+}
+
+.square {
+  height: 60%;
+}
+
+.circle {
+  height: 60%;
+  transform-style: preserve-3d;
+  border-radius: 50%;
+}
+
+.rectangle {
+  height: 30%;
+  border-radius: 10%;
+  -webkit-transform: skewX(-20deg);
+  transform: skewX(-20deg);
+}
+
+.emoji-row {
+  text-align:center;
+  height:100%;
+  width:100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.emoji {
+  border: 2px solid black;
+  width: 30%;
+}
+
+.blue.solid .emoji {
+  background: #3d3dea;
+}
+
+.orange.solid .emoji {
+  background: orange;
+} 
+
+.pink.solid .emoji {
+  background: #FF69B4;
+}
+
+.blue.double .emoji {
+  border: 2px solid #3d3dea;
+
+}
+
+.orange.double .emoji {
+  border: 2px solid orange;
+} 
+
+.pink.double .emoji {
+ border: 2px solid #FF69B4;
+}
+
+.blue.dotted .emoji {
+  background: repeating-linear-gradient(
+      to right,
+  #3d3dea,
+   #FFF 10px,
+  #000 10px 
+);
+}
+
+.orange.dotted .emoji {
+    background: repeating-linear-gradient(
+  to right,
+  orange,
+   #FFF 10px,
+  #000 10px 
+);
+} 
+
+.pink.dotted .emoji {
+   background: repeating-linear-gradient(
+  to right,
+  #FF69B4,
+   #FFF 10px,
+  #000 10px 
+);
+}
+
+.flipped {
+  animation: flip 0.5s linear;
+  -webkit-transform: rotateX(180deg) skewX(0deg);
+  transform: rotateX(180deg) skewX(0deg);
+}
+
+@keyframes flip {
+    from {
+        -webkit-transform: rotateX(0deg);
+        transform: rotateX(0deg);
+    }
+    to {
+        -webkit-transform: rotateX(180deg) skewX(0deg);
+        transform: rotateX(180deg) skewX(0deg);
+    }
 }
