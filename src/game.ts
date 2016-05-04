@@ -38,9 +38,9 @@ module game {
     });
 
     // See http://www.sitepoint.com/css3-animation-javascript-event-handlers/
-    document.addEventListener("animationend", animationEndedCallback, false); // standard
-    document.addEventListener("webkitAnimationEnd", animationEndedCallback, false); // WebKit
-    document.addEventListener("oanimationend", animationEndedCallback, false); // Opera
+    // document.addEventListener("animationend", animationEndedCallback, false); // standard
+    // document.addEventListener("webkitAnimationEnd", animationEndedCallback, false); // WebKit
+    // document.addEventListener("oanimationend", animationEndedCallback, false); // Opera
 
     let w: any = window;
     if (w["HTMLInspector"]) {
