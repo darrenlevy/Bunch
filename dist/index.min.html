@@ -24,9 +24,7 @@
 
   <script src="js/everything.min.js"></script>
 </head>
-<body ng-cloak>
-  <div id="e2e_test_open_rules_modal" class="help-tip" ng-click="game.isHelpModalShown = true" aria-hidden="true"></div>
-    
+<body ng-cloak>    
   <div class="overlayModal" ng-click="game.clickedOnModal($event)"
       ng-class="{zeroOpacity: !game.isHelpModalShown, oneOpacity: game.isHelpModalShown}" aria-hidden="true">
     <div class="modal-dialog">
@@ -43,7 +41,7 @@
               <table>
                 <tr>
                   <td id="e2e_test_rules_slide1_text">
-                    {{ 'RULES_SLIDE1' | translate }}
+                    {{ 'BUNCHES_RULES_SLIDE1' | translate }}
                   </td>
                   <td>
                     <img src="imgs/HelpSlide1.png" alt="Help slide 1" style="height:100px;">
@@ -55,7 +53,7 @@
               <table>
                 <tr>
                   <td id="e2e_test_rules_slide2_text">
-                  {{ 'RULES_SLIDE2' | translate }}
+                  {{ 'BUNCHES_RULES_SLIDE2' | translate }}
                   </td>
                   <td>
                     <img src="imgs/HelpSlide2.png" alt="Help slide 2" style="height:100px;">

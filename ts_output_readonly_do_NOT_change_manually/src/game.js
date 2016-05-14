@@ -57,17 +57,17 @@ var game;
                 fr: "Règles de Grappes",
                 hi: "गुच्छों के नियम",
             },
-            RULES_SLIDE1: {
-                en: "You and your opponent take turns finding a Bunch. A Bunch is 3 cards where the number of emoji, color of emoji, the emoji itself and border of the card are all the same or all different.",
-                es: "Tu y su oponente se da vuelta para encontrar un manojo. Un manojo es 3 cartas donde el número de emoji, el color de emoji, el propio emoji y el borde de la tarjeta son todos iguales o diferentes.",
-                iw: "אתה ולקחת היריב פונה למצוא חבורה. חבורה היא 3 כרטיסים שבהם מספר emoji, הצבע של emoji, האמוג'י עצם הגבול של הכרטיס הם כולם אותו הדבר או שונה זה מזה.",
-                pt: "Você e seu oponente se revezam encontrar um Bunch. Um grupo é de 3 cartões onde o número de emoji, cor de emoji, a própria emoji e borda do cartão são todos iguais ou diferentes.",
-                zh: "你和你的对手轮流找一束。一堆是3张卡，其中的表情符号的卡号，表情符号的颜色，表情符号本身和边框都相同或各不相同。",
-                el: "Εσείς και ο αντίπαλός σας λαμβάνουν τελικά την εξεύρεση μια δέσμη. Ένα μάτσο είναι 3 κάρτες, όπου ο αριθμός των emoji, το χρώμα του emoji, η ίδια η Emoji και σύνορα της κάρτας είναι όλα τα ίδια ή όλα διαφορετικά.",
-                fr: "Vous et votre adversaire se relaient trouver un Bunch. A Bunch est de 3 cartes où le nombre de emoji, couleur de emoji, l'emoji lui-même et la frontière de la carte sont tous les mêmes ou tous différents.",
-                hi: "आप और अपने प्रतिद्वंद्वी को लेने के लिए एक गुच्छा पाने बदल जाता है। एक गुच्छा 3 कार्ड जहां इमोजी की संख्या, इमोजी के रंग, इमोजी ही है और सीमा कार्ड के सभी एक ही है या सब अलग हैं।",
+            BUNCHES_RULES_SLIDE1: {
+                en: "You and your opponent take turns finding a Bunch. A Bunch is 3 cards where the icons, number of icons, color of icons, and design of the icons are all the same or all different.",
+                iw: "אתה ולקחת היריב פונה למצוא חבורה. חבורה היא 3 כרטיסים איפה הסמלים, מספר הסמלים, צבע של סמלים, ועיצוב של הסמלים הם כולם אותו הדבר או שונה זה מזה.",
+                pt: "Você e seu oponente se revezam encontrar um Bunch. Um grupo é de 3 cartões onde os ícones, número de ícones, cor dos ícones, e design dos ícones são todos iguais ou diferentes.",
+                zh: "你和你的对手轮流找一束。一束是3张卡，其中的图标，图标号，图标颜色和图标设计都是相同的或各不相同。",
+                el: "Εσείς και ο αντίπαλός σας λαμβάνουν τελικά την εξεύρεση μια δέσμη. Ένα μάτσο είναι 3 κάρτες, όπου οι εικόνες, τον αριθμό των εικόνων, το χρώμα των εικόνων, καθώς και το σχεδιασμό των εικόνων είναι όλα τα ίδια ή όλα διαφορετικά.",
+                fr: "Vous et votre adversaire se relaient trouver un Bunch. A Bunch est de 3 cartes où les icônes, nombre d'icônes, la couleur des icônes, et la conception des icônes sont tous identiques ou tous différents.",
+                hi: "आप और अपने प्रतिद्वंद्वी को लेने के लिए एक गुच्छा पाने बदल जाता है। एक गुच्छा 3 कार्ड जहां माउस, माउस की डिजाइन माउस की संख्या, प्रतीक का रंग है, और सभी एक ही है या सब अलग हैं।",
+                es: "Usted y su oponente se da vuelta para encontrar un manojo. Un manojo es de 3 tarjetas donde los iconos, serie de iconos, color de los iconos, y el diseño de los iconos son todos iguales o diferentes."
             },
-            RULES_SLIDE2: {
+            BUNCHES_RULES_SLIDE2: {
                 en: "There are 2 rounds. Player 1 starts the first round. Player 2 starts the second round. You receive 3 point for similarities and 9 points for differences.",
                 es: "Hay 2 rondas. El jugador 1 comienza la primera ronda. El jugador 2 se inicia la segunda ronda. Recibe 3 punto por similitudes y 9 puntos por diferencias.",
                 iw: "ישנם 2 סיבובים. שחקן 1 מתחיל את הסיבוב הראשון. שחקן 2 מתחיל הסיבוב השני. אתה מקבל 3 נקודות עבור דמיון ו -9 נקודות עבור הבדלים.",
