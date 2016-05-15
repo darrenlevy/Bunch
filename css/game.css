@@ -4,9 +4,10 @@ body{
 
 .row {
   position: absolute;
-  left: 0;
+  left: 2%;
   width: 100%;
   height: 25%;
+  margin: 0!important;
 }
 
 .column {
@@ -20,7 +21,7 @@ body{
   justify-content: center;
   resize: vertical;
   cursor: pointer;
-  box-shadow: 0 0 5px 3px rgba(0, 0, 0, 0.33);
+  box-shadow: 0 0 2px 2px rgba(0, 0, 0, 0.33);
   border-radius: 5px;
 }
 
